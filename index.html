@@ -456,6 +456,17 @@ const STATUSES = [
   {id:"passed",       label:"Passed"}
 ];
 const statusLabel = id => (STATUSES.find(s => s.id === id) || {}).label || id;
+/* venue pipeline: 3 working phases + booked. Old statuses map onto them so nothing breaks. */
+const VENUE_PHASES = [
+  {id:"research",  label:"Research"},
+  {id:"cleanup",   label:"Clean-up"},
+  {id:"shortlist", label:"Shortlist"},
+  {id:"booked",    label:"Booked"}
+];
+const LEGACY_PHASE = {toContact:"research", emailed:"research", quoted:"research", visitPlanned:"research",
+  visited:"research", passed:"cleanup", research:"research", cleanup:"cleanup", shortlist:"shortlist", booked:"booked"};
+const phaseOf = v => LEGACY_PHASE[v.status] || "research";
+const phaseLabel = id => (VENUE_PHASES.find(p => p.id === id) || {}).label || id;
 const VOTES = [
   {id:"love", label:"Love it"},
   {id:"ok",   label:"Fine"},
@@ -6166,8 +6177,10 @@ const SEED = {
   if (g){ g.coverFileId = "ph1"; g.coverThumb = PH("Sample photo","#8a5f22","#5e1f2e"); } })();
 
 /* ============================ state & store ============================ */
+const readMember = () => { try { return localStorage.getItem("stefana.member") || "m1"; } catch(e){ return "m1"; } };
+const rememberMember = id => { try { localStorage.setItem("stefana.member", id); } catch(e){} };
 const state = {
-  booted:false, mode:"demo", user:null, currentMemberId:"m1", uiTheme:"spring",
+  booted:false, mode:"demo", user:null, currentMemberId: readMember(), uiTheme:"spring",
   members:[], dates:[], venues:[], tasks:[], activity:[],
   meta:{ weddingName:"Stefana", coupleNames:"", expectedGuests:90, lockedDateId:null, memberEmails:{} },
   fbEmpty:false, permDenied:false
@@ -6180,6 +6193,10 @@ function scheduleRender(){ if (renderQueued) return; renderQueued = true;
 const me = () => state.members.find(m => m.id === state.currentMemberId) || state.members[0] || {id:"m1", name:"You", role:""};
 const curTheme = () => { const m = state.members.find(x => x.id === state.currentMemberId);
   return (m && m.theme) || state.uiTheme || "spring"; };
+/* the maid & groom of honor: no budget, no guests, only shortlisted/booked venues */
+const isHelper = () => { const m = me(); return m.id === "m3" || m.id === "m4" || /hono(u)?r/i.test(m.role || ""); };
+const liveVenues = () => state.venues.filter(v => !v.deleted);
+const visibleVenues = () => isHelper() ? liveVenues().filter(v => phaseOf(v) === "shortlist" || phaseOf(v) === "booked") : liveVenues();
 
 /* ---------- fairy lights & sprigs ---------- */
 function garlandSVG(){
@@ -6236,6 +6253,13 @@ function demoAdapter(){
       for (let i = 0; i < n; i++){ const c = state.filechunks.find(x => x.id === fileId + "_" + i); out += c ? c.data : ""; }
       return out; },
     addActivity(e){ state.activity.unshift(e); state.activity = state.activity.slice(0, 20); scheduleRender(); },
+    async purgeOwner(oid){
+      state.files.filter(f => (f.ownerId||f.venueId) === oid).forEach(f => {
+        for (let i = 0; i < (f.chunks||0); i++) this.remove("filechunks", f.id + "_" + i);
+        this.remove("files", f.id);
+      });
+      state.comments.filter(c => (c.ownerId||c.venueId) === oid).forEach(c => this.remove("comments", c.id));
+    },
     async seedAll(){}, signOut(){}
   };
 }
@@ -6270,6 +6294,7 @@ async function firebaseAdapter(cfg){
     }, () => {}));
     unsubs.push(fsM.onSnapshot(fsM.doc(db, "meta", "main"), d => {
       if (d.exists()) Object.assign(state.meta, d.data());
+      syncCurrentMember(); // memberEmails live in meta — re-map once it arrives (fixes the reload-as-Bride bug)
       scheduleRender();
     }));
     unsubs.push(fsM.onSnapshot(
@@ -6304,7 +6329,7 @@ async function firebaseAdapter(cfg){
     const email = (state.user?.email || "").toLowerCase();
     const map = state.meta.memberEmails || {};
     const hit = Object.entries(map).find(([mid, em]) => (em||"").toLowerCase() === email);
-    if (hit) state.currentMemberId = hit[0];
+    if (hit){ if (state.currentMemberId !== hit[0]){ state.currentMemberId = hit[0]; scheduleRender(); } rememberMember(hit[0]); }
   }
 
   authM.onAuthStateChanged(auth, user => {
@@ -6331,6 +6356,23 @@ async function firebaseAdapter(cfg){
     setMeta(patch){ fsM.setDoc(fsM.doc(db, "meta", "main"), patch, {merge:true}).catch(e => toast("Save failed: " + e.code)); },
     addActivity(e){ const {id, ...data} = e; fsM.setDoc(fsM.doc(db, "activity", id), data).catch(()=>{}); },
     setPublic(patch){ fsM.setDoc(fsM.doc(db, "public", "info"), patch, {merge:true}).catch(e => toast("Save failed: " + e.code)); },
+    async purgeOwner(oid){
+      const grab = async (coll, field) => { try {
+        return (await fsM.getDocs(fsM.query(fsM.collection(db, coll), fsM.where(field, "==", oid)))).docs;
+      } catch(e){ return []; } };
+      const files = [...await grab("files","ownerId"), ...await grab("files","venueId")];
+      const seen = new Set();
+      for (const d of files){
+        if (seen.has(d.id)) continue; seen.add(d.id);
+        const nChunks = d.data().chunks || 0;
+        for (let i = 0; i < nChunks; i++) fsM.deleteDoc(fsM.doc(db, "filechunks", d.id + "_" + i)).catch(()=>{});
+        fsM.deleteDoc(fsM.doc(db, "files", d.id)).catch(()=>{});
+      }
+      const cs = [...await grab("comments","ownerId"), ...await grab("comments","venueId")];
+      const seenC = new Set();
+      cs.forEach(d => { if (seenC.has(d.id)) return; seenC.add(d.id);
+        fsM.deleteDoc(fsM.doc(db, "comments", d.id)).catch(()=>{}); });
+    },
     watchOwner,
     async loadChunks(fileId, n){
       const reads = []; for (let i = 0; i < n; i++) reads.push(fsM.getDoc(fsM.doc(db, "filechunks", fileId + "_" + i)));
@@ -6388,7 +6430,8 @@ function bestQuote(v){
   return [...v.quotes].sort((a,b) => quoteTrueTotal(a,g) - quoteTrueTotal(b,g))[0];
 }
 function venueNudges(){
-  return state.venues.filter(v => v.status === "emailed" && v.lastContact && daysSince(v.lastContact) >= NUDGE_DAYS);
+  return liveVenues().filter(v => phaseOf(v) === "research" && !(v.quotes||[]).length
+    && v.lastContact && daysSince(v.lastContact) >= NUDGE_DAYS);
 }
 function upcomingPayments(){
   const fromBudget = state.budget.filter(b => b.dueDate && (+b.amount||0) - (+b.paid||0) > 0)
@@ -6426,7 +6469,7 @@ function subtabsHTML(base, items, cur){
   return `<div class="subtabs" role="tablist">` + items.map(([id,label]) =>
     `<button class="subtab ${cur===id?"on":""}" data-subtab="${base}${id?"/"+id:""}">${label}</button>`).join("") + `</div>`;
 }
-const navHTML = cur => NAV.map(n =>
+const navHTML = cur => NAV.filter(n => !(isHelper() && (n.id === "guests" || n.id === "budget"))).map(n =>
   `<button class="navbtn ${cur===n.id?"on":""}" data-nav="${n.id}" aria-label="${n.label}">${n.icon}<span>${n.label}</span></button>`).join("");
 
 function render(){
@@ -6448,7 +6491,8 @@ function render(){
     return;
   }
 
-  const {page, id} = routes();
+  let {page, id} = routes();
+  if (isHelper() && (page === "guests" || page === "budget")){ page = "home"; id = null; }
   const ownerDetail = (page === "venues" && id && id !== "compare") ? id
                     : (page === "vendors" && id) ? id : null;
   if (adapter && adapter.watchOwner) adapter.watchOwner(ownerDetail);
@@ -6512,7 +6556,7 @@ function wireShell(root){
     else { state.uiTheme = t; scheduleRender(); }
   }));
   const sw = $("#member-switch", root);
-  if (sw) sw.addEventListener("change", () => { state.currentMemberId = sw.value; scheduleRender(); });
+  if (sw) sw.addEventListener("change", () => { state.currentMemberId = sw.value; rememberMember(sw.value); scheduleRender(); });
   const so = $('[data-act="signout"]', root);
   if (so) so.addEventListener("click", () => adapter.signOut());
   const sd = $('[data-act="seed"]', root);
@@ -6568,14 +6612,14 @@ function wireAuth(root){
 function viewHome(){
   const ld = lockedDate(), lead = leadingDate();
   const g = state.meta.expectedGuests;
-  const inPlay = state.venues.filter(v => v.status !== "passed").length;
-  const quoted = state.venues.filter(v => (v.quotes||[]).length).length;
+  const inPlay = visibleVenues().filter(v => phaseOf(v) !== "cleanup").length;
+  const quoted = visibleVenues().filter(v => (v.quotes||[]).length).length;
   const tasksAll = state.tasks.length;
   const tasksDone = state.tasks.filter(t => t.done).length;
   const pct = tasksAll ? Math.round(tasksDone/tasksAll*100) : 0;
   const soon = state.tasks.filter(t => { if (t.done) return false; const r = resolveDue(t);
     return r.iso && daysUntil(r.iso) <= 7; }).sort((a,b) => (resolveDue(a).iso||"").localeCompare(resolveDue(b).iso||""));
-  const nudges = venueNudges();
+  const nudges = isHelper() ? [] : venueNudges();
 
   const hero = ld ? `
     <div class="hero">${sprigs()}
@@ -6596,7 +6640,7 @@ function viewHome(){
   ${hero}
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-top:16px">
     <div class="card"><div class="dim small">Venues in play</div><div class="serif" style="font-size:30px">${inPlay}</div><div class="note">${quoted} with quotes in hand</div></div>
-    <div class="card"><div class="dim small">Planned for</div><div class="serif" style="font-size:30px">${g}</div><div class="note">${state.guests.length ? headcountYes() + " yes so far" : "guests · edit in set-up"}</div></div>
+    ${isHelper() ? "" : `<div class="card"><div class="dim small">Planned for</div><div class="serif" style="font-size:30px">${g}</div><div class="note">${state.guests.length ? headcountYes() + " yes so far" : "guests · edit in set-up"}</div></div>`}
     <div class="card"><div class="dim small">Due this week</div><div class="serif" style="font-size:30px">${soon.length}</div><div class="note">tasks needing hands</div></div>
     <div class="card"><div class="dim small">Plan progress</div><div class="serif" style="font-size:30px">${pct}%</div><div class="progress" style="margin-top:8px"><i style="width:${pct}%"></i></div></div>
   </div>
@@ -6611,7 +6655,7 @@ function viewHome(){
         <button class="btn sm right" data-followup="${v.id}">Log a follow-up</button>
       </div>`).join("")}
   </div>` : ""}
-  ${(() => { const up = upcomingPayments().slice(0,3); return up.length ? `
+  ${(() => { if (isHelper()) return ""; const up = upcomingPayments().slice(0,3); return up.length ? `
   <div class="sect">Money coming due</div>
   <div class="stack">
     ${up.map(p => { const d = daysUntil(p.due); return `
@@ -6664,7 +6708,8 @@ function viewDates(){
     const isLocked = ld && ld.id === d.id;
     const day = toDate(d.iso);
     const weekdayHint = [1,2,3,4].includes(day.getDay()) ? "Weekday — venues often discount" : null;
-    const freeCount = state.venues.filter(v => (v.availability||{})[d.iso] === "free").length;
+    const freeVs = visibleVenues().filter(v => (v.availability||{})[d.iso] === "free");
+    const freeCount = freeVs.length;
     const myVote = (d.votes||{})[meId];
     return `
     <div class="datecard ${isLead?"leading":""} ${isLocked?"locked":""}">
@@ -6674,12 +6719,13 @@ function viewDates(){
           <div class="moy">${day.toLocaleDateString("en-GB",{month:"long"})} ${day.getFullYear()}</div></div>
         <div class="stack" style="gap:6px;align-items:flex-end;padding-right:22px">
           <span class="stamp">${wd}</span>${seasonStamp(d.iso)}
+          ${freeCount ? `<span class="stamp olive">${plural(freeCount,"venue")} free</span>` : ""}
           ${isLocked ? `<span class="stamp solid">Locked in</span>` : isLead ? `<span class="stamp candle">Leading</span>` : ""}
         </div>
       </div>
       ${(d.flags||[]).map(f => `<div class="flagline"><span class="dot" style="background:var(--accent)"></span><span>${esc(f)}</span></div>`).join("")}
       ${weekdayHint ? `<div class="flagline"><span class="dot" style="background:var(--faint)"></span><span>${weekdayHint}</span></div>` : ""}
-      ${freeCount ? `<div class="flagline"><span class="dot" style="background:var(--ever)"></span><span>${plural(freeCount,"venue")} marked free on this date</span></div>` : ""}
+      ${freeCount ? `<div class="flagline"><span class="dot" style="background:var(--ever)"></span><span><b style="color:var(--ever)">${plural(freeCount,"venue")} available:</b> ${esc(freeVs.slice(0,3).map(v=>v.name).join(", "))}${freeCount > 3 ? ` +${freeCount-3} more` : ""}</span></div>` : ""}
       <div class="voterow" title="Votes so far">
         ${state.members.map(m => { const v = (d.votes||{})[m.id];
           const col = v === "love" ? "var(--accent)" : v === "ok" ? "var(--sub)" : v === "veto" ? "var(--berry)" : "transparent";
@@ -6765,54 +6811,90 @@ function perGuestAllIn(q){
   return quoteTrueTotal(q, g) / g;
 }
 
-const vFilt = {season:new Set(), country:new Set(), vibe:new Set(), sleeps:false, verified:false, hasQuote:false};
-const STATUS_RANK = {booked:0, shortlist:1, visited:2, visitPlanned:3, quoted:4, emailed:5, toContact:6, passed:7};
+const vFilt = {use:"", stay:"", season:"", country:"", vibe:"", price:""};
+const PHASE_RANK = {booked:0, shortlist:1, research:2, cleanup:3};
+const anyQuote = (v, test) => (v.quotes||[]).some(q => test(q.inclusions || {}));
+const usesCeremony  = v => !!v.useCeremony  || anyQuote(v, i => i.ceremony);
+const usesReception = v => !!v.useReception || anyQuote(v, i => i.reception);
+const hasStay = v => !!v.sleeps || !!(v.stay||"").trim() || anyQuote(v, i => (i.accommodation||{}).included);
 function venueMatches(v){
-  if (vFilt.sleeps && !v.sleeps) return false;
-  if (vFilt.verified && !v.verified) return false;
-  if (vFilt.hasQuote && !(v.quotes||[]).length) return false;
-  if (vFilt.season.size && ![...vFilt.season].some(s => (v.seasons||[]).includes(s))) return false;
-  if (vFilt.country.size && !vFilt.country.has(v.country)) return false;
-  if (vFilt.vibe.size && ![...vFilt.vibe].every(t => (v.vibes||[]).includes(t))) return false;
+  if (vFilt.use === "ceremony" && !usesCeremony(v)) return false;
+  if (vFilt.use === "reception" && !usesReception(v)) return false;
+  if (vFilt.use === "both" && !(usesCeremony(v) && usesReception(v))) return false;
+  if (vFilt.stay === "stay" && !hasStay(v)) return false;
+  if (vFilt.stay === "sleeps" && !v.sleeps) return false;
+  if (vFilt.season && !(v.seasons||[]).includes(vFilt.season)) return false;
+  if (vFilt.country && v.country !== vFilt.country) return false;
+  if (vFilt.vibe && !(v.vibes||[]).includes(vFilt.vibe)) return false;
+  if (vFilt.price === "quote" && !(v.quotes||[]).length) return false;
+  if (vFilt.price === "verified" && !v.verified) return false;
   return true;
 }
 function viewVenues(){
   const g = +state.meta.expectedGuests || 40;
-  const counts = Object.fromEntries(STATUSES.map(s => [s.id, state.venues.filter(v => v.status === s.id).length]));
-  const chips = [`<button class="chip click ${venueFilter==="all"?"on":""}" data-vf="all">All · ${state.venues.length}</button>`]
-    .concat(STATUSES.filter(s => counts[s.id]).map(s =>
-      `<button class="chip click ${venueFilter===s.id?"on":""}" data-vf="${s.id}">${s.label} · ${counts[s.id]}</button>`)).join("");
+  const pool = visibleVenues();
+  const buried = state.venues.filter(v => v.deleted);
+  const counts = Object.fromEntries(VENUE_PHASES.map(p => [p.id, pool.filter(v => phaseOf(v) === p.id).length]));
+  const phases = isHelper() ? VENUE_PHASES.filter(p => p.id === "shortlist" || p.id === "booked") : VENUE_PHASES;
+  const chips = [`<button class="chip click ${venueFilter==="all"?"on":""}" data-vf="all">All · ${pool.length}</button>`]
+    .concat(phases.map(p =>
+      `<button class="chip click ${venueFilter===p.id?"on":""}" data-vf="${p.id}">${p.label} · ${counts[p.id]||0}</button>`))
+    .concat(!isHelper() && buried.length ? [`<button class="chip click ${venueFilter==="graveyard"?"on":""}" data-vf="graveyard">🪦 Graveyard · ${buried.length}</button>`] : [])
+    .join("");
 
-  const countries = [...new Set(state.venues.map(v => v.country).filter(Boolean))].sort();
-  const vibesAll = [...new Set(state.venues.flatMap(v => v.vibes || []))];
+  /* -------- the graveyard -------- */
+  if (venueFilter === "graveyard"){
+    const rows = [...buried].sort((a,b) => (b.deletedAt||0) - (a.deletedAt||0)).map(v => `
+      <div class="vrow" data-open-venue="${v.id}">
+        ${v.coverThumb ? `<img class="thumb" src="${v.coverThumb}" alt="" style="filter:grayscale(1) opacity(.65)">` : `<span class="thumb ph">${I.camera}</span>`}
+        <div style="min-width:0;flex:1">
+          <div class="name">${v.flag ? v.flag + " " : ""}${esc(v.name)}</div>
+          <div class="meta">${esc(v.region||"")}${v.country ? " · " + esc(v.country) : ""}${v.deletedAt ? " · buried " + fmtDate(new Date(v.deletedAt).toISOString().slice(0,10)) : ""}</div>
+        </div>
+        <div class="row" style="gap:8px;flex:none">
+          <button class="btn sm" data-restore-venue="${v.id}">Restore</button>
+          <button class="btn sm danger" data-bury-forever="${v.id}">Delete forever</button>
+        </div>
+      </div>`).join("");
+    return `
+  <div class="pagehead">
+    <div><h1>Venue graveyard</h1><div class="sub">Deleted venues rest here with their quotes, photos and notes intact. Restore one any time — or delete it forever.</div></div>
+  </div>
+  <div class="row" style="margin:14px 0 14px">${chips}</div>
+  ${buried.length ? `<div class="stack">${rows}</div>` : `<div class="empty"><div class="serif">The graveyard is empty</div>Venues you delete will rest here, restorable.</div>`}`;
+  }
+
+  /* -------- the living list -------- */
+  const countries = [...new Set(pool.map(v => v.country).filter(Boolean))].sort();
+  const vibesAll = [...new Set(pool.flatMap(v => v.vibes || []))];
   const vibes = VIBE_ORDER.filter(t => vibesAll.includes(t)).concat(vibesAll.filter(t => !VIBE_ORDER.includes(t)));
-  const fchip = (kind, key, label, on) => `<button class="chip click ${on?"on":""}" data-ff="${kind}" data-fv="${esc(key)}">${label}</button>`;
+  const opt = (val, label, cur) => `<option value="${esc(val)}" ${cur===val?"selected":""}>${label}</option>`;
+  const sel = (key, opts) => `<select data-fsel="${key}" style="width:auto;max-width:200px;padding:7px 10px;font-size:13px">${opts}</select>`;
   const filterBar = `
-  <div class="fbar">
-    <div class="flab">Quick</div>
-    <div class="frow">
-      ${fchip("sleeps","", "Sleeps everyone on-site", vFilt.sleeps)}
-      ${fchip("verified","", "\u2713 Price-verified", vFilt.verified)}
-      ${fchip("hasQuote","", "Has a real quote", vFilt.hasQuote)}
-    </div>
-    <div class="flab">Season</div>
-    <div class="frow">${Object.entries(SEASON_LABEL).map(([k,l]) => fchip("season", k, l, vFilt.season.has(k))).join("")}</div>
-    <div class="flab">Country</div>
-    <div class="frow">${countries.map(c => fchip("country", c, esc(c), vFilt.country.has(c))).join("")}</div>
-    <div class="flab">Vibe</div>
-    <div class="frow">${vibes.map(t => fchip("vibe", t, esc(t), vFilt.vibe.has(t))).join("")}</div>
+  <div class="fbar" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+    ${sel("use", opt("","Use: any", vFilt.use) + opt("ceremony","Ceremony", vFilt.use) + opt("reception","Reception", vFilt.use) + opt("both","Ceremony + reception", vFilt.use))}
+    ${sel("stay", opt("","Stay: any", vFilt.stay) + opt("stay","Has stay on-site", vFilt.stay) + opt("sleeps","Sleeps everyone", vFilt.stay))}
+    ${sel("season", opt("","Season: any", vFilt.season) + Object.entries(SEASON_LABEL).map(([k,l]) => opt(k, l, vFilt.season)).join(""))}
+    ${countries.length ? sel("country", opt("","Country: any", vFilt.country) + countries.map(c => opt(c, esc(c), vFilt.country)).join("")) : ""}
+    ${vibes.length ? sel("vibe", opt("","Vibe: any", vFilt.vibe) + vibes.map(t => opt(t, esc(t), vFilt.vibe)).join("")) : ""}
+    ${sel("price", opt("","Price: any", vFilt.price) + opt("quote","Has a real quote", vFilt.price) + opt("verified","\u2713 Price-verified", vFilt.price))}
+    ${Object.values(vFilt).some(Boolean) ? `<button class="btn sm ghost" data-act="clear-filters">Reset filters</button>` : ""}
   </div>`;
 
-  let list = (venueFilter === "all" ? [...state.venues] : state.venues.filter(v => v.status === venueFilter)).filter(venueMatches);
+  let list = (venueFilter === "all" ? [...pool] : pool.filter(v => phaseOf(v) === venueFilter)).filter(venueMatches);
   const priceKey = v => { const bq = bestQuote(v); return bq ? quoteTrueTotal(bq, g) : (v.estTotal || Infinity); };
-  list.sort((a,b) => (STATUS_RANK[a.status]??9) - (STATUS_RANK[b.status]??9) || priceKey(a) - priceKey(b) || a.name.localeCompare(b.name));
+  list.sort((a,b) => (PHASE_RANK[phaseOf(a)]??9) - (PHASE_RANK[phaseOf(b)]??9) || priceKey(a) - priceKey(b) || a.name.localeCompare(b.name));
   const fd = focusDate();
 
   const rows = list.map(v => {
     const bq = bestQuote(v);
-    const nudge = v.status === "emailed" && v.lastContact && daysSince(v.lastContact) >= NUDGE_DAYS;
+    const nudge = !isHelper() && phaseOf(v) === "research" && !(v.quotes||[]).length && v.lastContact && daysSince(v.lastContact) >= NUDGE_DAYS;
     const avail = fd ? (v.availability||{})[fd.iso] : null;
     const rt = ratingOf(v);
+    const ph = phaseOf(v);
+    const useStamps = [usesCeremony(v) ? `<span class="stamp">Ceremony</span>` : "",
+                       usesReception(v) ? `<span class="stamp">Reception</span>` : "",
+                       hasStay(v) ? `<span class="stamp olive">Stay</span>` : ""].join("");
     return `<div class="vrow" data-open-venue="${v.id}">
       ${v.coverThumb ? `<img class="thumb" src="${v.coverThumb}" alt="">`
                      : `<span class="thumb ph">${I.camera}</span>`}
@@ -6822,6 +6904,7 @@ function viewVenues(){
           ${nudge ? `<span class="dot" title="Waiting on a reply" style="background:var(--berry)"></span>` : ""}</div>
         <div class="meta">${esc(v.region || "")}${v.country ? " · " + esc(v.country) : ""}${v.sleeps ? " · sleeps everyone on-site" : ""}${v.capacity ? ` · up to ${v.capacity} guests` : ""}</div>
         ${v.style ? `<div class="meta" style="opacity:.85">${esc(v.style)}</div>` : ""}
+        ${useStamps.trim() ? `<div class="row" style="gap:5px;margin-top:4px">${useStamps}</div>` : ""}
         ${avail ? `<div class="meta" style="color:${avail==="free"?"var(--ever)":"var(--berry)"}">${avail === "free" ? "Free" : "Booked"} on ${fmtDate(fd.iso)}</div>` : ""}
       </div>
       <div style="text-align:right;flex:none">
@@ -6832,33 +6915,43 @@ function viewVenues(){
              : v.estTotal ? `<div class="mono" style="font-size:15px">\u2248 ${money(v.estTotal)}</div>
                 <div class="note">${v.estIsEstimate ? "estimate" : "published rates"}${v.verified ? " · \u2713 verified" : ""}</div>`
              : `<div class="note">no price yet</div>`}
-        <div style="margin-top:5px"><span class="stamp ${v.status==="booked"?"solid":v.status==="shortlist"?"candle":v.status==="passed"?"wax":""}">${statusLabel(v.status)}</span></div>
+        <div style="margin-top:5px"><span class="stamp ${ph==="booked"?"solid":ph==="shortlist"?"candle":ph==="cleanup"?"wax":""}">${phaseLabel(ph)}</span></div>
       </div>
     </div>`;
   }).join("");
 
   return `
   <div class="pagehead">
-    <div><h1>Venues</h1><div class="sub">All ${state.venues.length} of them — your live shortlist first, then the idea bench. Filter by season, country and vibe, exactly like your old planner.</div></div>
+    <div><h1>Venues</h1><div class="sub">${isHelper()
+      ? "The shortlist the couple wants your eyes on — open one to rate it and leave notes."
+      : `Research → clean-up → shortlist → booked. ${pool.length} in play${buried.length ? `, ${buried.length} resting in the graveyard` : ""}.`}</div></div>
     <div class="row">
       <button class="btn" data-act="compare">${I.compare} Compare quotes</button>
-      <button class="btn primary" data-act="add-venue">${I.plus} Add venue</button>
+      ${isHelper() ? "" : `<button class="btn primary" data-act="add-venue">${I.plus} Add venue</button>`}
     </div>
   </div>
   <div class="row" style="margin:14px 0 0">${chips}</div>
   ${filterBar}
-  <div class="fcount">Showing ${list.length} of ${state.venues.length} venues</div>
+  <div class="fcount">Showing ${list.length} of ${pool.length} venues</div>
   ${list.length ? `<div class="stack">${rows}</div>` : `<div class="empty"><div class="serif">Nothing matches this combo</div>Loosen one filter.</div>`}`;
 }
 function wireVenues(root){
   $$("[data-vf]", root).forEach(c => c.addEventListener("click", () => { venueFilter = c.dataset.vf; scheduleRender(); }));
-  $$("[data-ff]", root).forEach(c => c.addEventListener("click", () => {
-    const kind = c.dataset.ff, val = c.dataset.fv;
-    if (kind === "sleeps" || kind === "verified" || kind === "hasQuote") vFilt[kind] = !vFilt[kind];
-    else { const set = vFilt[kind]; set.has(val) ? set.delete(val) : set.add(val); }
-    scheduleRender();
-  }));
-  $$("[data-open-venue]", root).forEach(r => r.addEventListener("click", () => go("#/venues/" + r.dataset.openVenue)));
+  $$("[data-fsel]", root).forEach(s => s.addEventListener("change", () => { vFilt[s.dataset.fsel] = s.value; scheduleRender(); }));
+  const cf = $('[data-act="clear-filters"]', root);
+  if (cf) cf.addEventListener("click", () => { Object.keys(vFilt).forEach(k => vFilt[k] = ""); scheduleRender(); });
+  $$("[data-open-venue]", root).forEach(r => r.addEventListener("click", e => {
+    if (e.target.closest("[data-restore-venue],[data-bury-forever]")) return;
+    go("#/venues/" + r.dataset.openVenue); }));
+  $$("[data-restore-venue]", root).forEach(b => b.addEventListener("click", () => {
+    const v = state.venues.find(x => x.id === b.dataset.restoreVenue); if (!v) return;
+    v.deleted = false; delete v.deletedAt; saveDoc("venues", v);
+    logActivity(`brought “${v.name}” back from the graveyard`); toast(`${v.name} restored`); }));
+  $$("[data-bury-forever]", root).forEach(b => b.addEventListener("click", async () => {
+    const v = state.venues.find(x => x.id === b.dataset.buryForever); if (!v) return;
+    if (await confirmDlg(`Delete <b>${esc(v.name)}</b> forever — quotes, photos and notes too? This really can\u2019t be undone.`)){
+      await adapter.purgeOwner(v.id);
+      dropDoc("venues", v.id); logActivity(`deleted “${v.name}” for good`); } }));
   const add = $('[data-act="add-venue"]', root); if (add) add.addEventListener("click", () => openVenueModal());
   const cmp = $('[data-act="compare"]', root); if (cmp) cmp.addEventListener("click", () => go("#/venues/compare"));
 }
@@ -7094,7 +7187,8 @@ function wireRatings(o, root){
 /* ---------- venue detail ---------- */
 function viewVenue(id){
   const v = state.venues.find(x => x.id === id);
-  if (!v) return `<div class="empty"><div class="serif">Venue not found</div><button class="btn" data-act="back">Back to venues</button></div>`;
+  if (!v || (isHelper() && (v.deleted || (phaseOf(v) !== "shortlist" && phaseOf(v) !== "booked"))))
+    return `<div class="empty"><div class="serif">${!v ? "Venue not found" : "This one isn\u2019t on the shortlist"}</div><button class="btn" data-act="back">Back to venues</button></div>`;
   const g = +state.meta.expectedGuests || 90;
   const meId = me().id;
   const rt = ratingOf(v);
@@ -7102,7 +7196,7 @@ function viewVenue(id){
   const imgs = files.filter(f => f.kind === "image");
   const pdfs = files.filter(f => f.kind !== "image");
   const comments = venueCommentsOf(v.id);
-  const stepper = STATUSES.map(s => `<button class="step ${v.status===s.id?"on":""}" data-status="${s.id}">${s.label}</button>`).join("");
+  const stepper = VENUE_PHASES.map(p => `<button class="step ${phaseOf(v)===p.id?"on":""}" data-status="${p.id}">${p.label}</button>`).join("");
   const availChips = [...state.dates].sort((a,b) => a.iso.localeCompare(b.iso)).map(d => {
     const st = (v.availability||{})[d.iso] || "unknown";
     return `<button class="chip availchip ${st}" data-avail="${d.iso}" title="Tap to cycle: unknown → free → booked">${fmtDate(d.iso)}${st !== "unknown" ? " · " + st : ""}</button>`;
@@ -7114,10 +7208,10 @@ function viewVenue(id){
       <div class="row between">
         <div><b class="serif" style="font-size:17px">${esc(q.label || "Quote")}</b>
           ${q.validUntil ? `<span class="note" style="margin-left:8px">valid until ${fmtDate(q.validUntil)}</span>` : ""}</div>
-        <div class="row" style="gap:6px">
+        ${isHelper() ? "" : `<div class="row" style="gap:6px">
           <button class="btn sm ghost" data-edit-quote="${q.id}">Edit</button>
           <button class="btn sm danger" data-del-quote="${q.id}">Delete</button>
-        </div>
+        </div>`}
       </div>
       <div class="row" style="gap:18px;margin:10px 0 12px;flex-wrap:wrap">
         <div><div class="dim small">Venue price</div><div class="mono" style="font-size:19px">${money(q.total, q.currency)}</div></div>
@@ -7143,11 +7237,14 @@ function viewVenue(id){
       <div class="sub">${esc(v.region||"")}${v.country?" · "+esc(v.country):""}${v.capacity?` · up to ${v.capacity} guests`:""}${v.style?` · ${esc(v.style)}`:""}
       ${v.url ? ` · <a href="${esc(v.url)}" target="_blank" rel="noopener">website ↗</a>` : ""}</div></div>
     <div class="row">
-      <button class="btn" data-act="edit-venue">Edit details</button>
-      <button class="btn danger" data-act="del-venue">Delete</button>
+      ${isHelper() ? "" : `<button class="btn" data-act="edit-venue">Edit details</button>
+      ${v.deleted
+        ? `<button class="btn danger" data-act="del-forever">Delete forever</button>`
+        : `<button class="btn danger" data-act="del-venue">Move to graveyard</button>`}`}
     </div>
   </div>
-  <div class="stepper" style="margin:12px 0 18px">${stepper}</div>
+  ${v.deleted ? `<div class="demo-banner" style="margin:0 0 14px">\ud83e\udea6 This venue is in the graveyard — hidden from every list and count. <button class="btn sm" data-act="restore-venue">Restore it</button></div>` : ""}
+  ${isHelper() ? "" : `<div class="stepper" style="margin:12px 0 18px">${stepper}</div>`}
 
   ${mediaCardHTML(v)}
 
@@ -7184,10 +7281,10 @@ function viewVenue(id){
       ${v.stay ? `<div class="note" style="margin-top:4px">Stay: ${esc(v.stay)}</div>` : ""}
       <div class="note" style="margin-top:8px">From your idea sheet — a real quote replaces this the moment you log one.</div>
     </div>` : `<div class="empty"><div class="serif">No quote yet</div>When it lands in your inbox, capture it here — structure beats screenshots.</div>`)}
-    <div class="row">
+    ${isHelper() ? "" : `<div class="row">
       <button class="btn" data-act="add-quote">${I.plus} Add a quote</button>
       <button class="btn" data-act="enquiry">${I.mail} Draft an enquiry</button>
-    </div>
+    </div>`}
   </div>
 
   ${commentsCardHTML(v)}
@@ -7198,16 +7295,29 @@ function viewVenue(id){
 }
 function wireVenue(id, root){
   const v = state.venues.find(x => x.id === id);
-  if (!v){ const b = $('[data-act="back"]', root); if (b) b.addEventListener("click", () => go("#/venues")); return; }
+  const blocked = !v || (isHelper() && (v.deleted || (phaseOf(v) !== "shortlist" && phaseOf(v) !== "booked")));
+  if (blocked){ const b = $('[data-act="back"]', root); if (b) b.addEventListener("click", () => go("#/venues")); return; }
   $('[data-act="back"]', root).addEventListener("click", () => go("#/venues"));
-  $('[data-act="edit-venue"]', root).addEventListener("click", () => openVenueModal(v));
-  $('[data-act="del-venue"]', root).addEventListener("click", async () => {
-    if (await confirmDlg(`Delete <b>${esc(v.name)}</b>, its quotes, photos and notes? This can't be undone.`)){
-      venueFilesOf(v.id).forEach(f => deleteFile(v, f));
-      venueCommentsOf(v.id).forEach(c => dropDoc("comments", c.id));
-      dropDoc("venues", v.id); logActivity(`deleted venue “${v.name}”`); go("#/venues"); } });
-  $('[data-act="log-contact"]', root).addEventListener("click", () => openFollowUp(v.id));
-  $('[data-act="add-quote"]', root).addEventListener("click", () => openQuoteModal(v.id));
+  const ed = $('[data-act="edit-venue"]', root);
+  if (ed) ed.addEventListener("click", () => openVenueModal(v));
+  const del = $('[data-act="del-venue"]', root);
+  if (del) del.addEventListener("click", async () => {
+    if (await confirmDlg(`Move <b>${esc(v.name)}</b> to the venue graveyard? Its quotes, photos and notes travel with it — you can restore it any time.`)){
+      v.deleted = true; v.deletedAt = Date.now(); saveDoc("venues", v);
+      logActivity(`moved “${v.name}” to the graveyard`); toast("Laid to rest — find it under the Graveyard chip"); go("#/venues"); } });
+  const rst = $('[data-act="restore-venue"]', root);
+  if (rst) rst.addEventListener("click", () => {
+    v.deleted = false; delete v.deletedAt; saveDoc("venues", v);
+    logActivity(`brought “${v.name}” back from the graveyard`); toast(`${v.name} is back`); });
+  const df = $('[data-act="del-forever"]', root);
+  if (df) df.addEventListener("click", async () => {
+    if (await confirmDlg(`Delete <b>${esc(v.name)}</b> forever — quotes, photos and notes too? This really can't be undone.`)){
+      await adapter.purgeOwner(v.id);
+      dropDoc("venues", v.id); logActivity(`deleted “${v.name}” for good`); go("#/venues"); } });
+  const lc = $('[data-act="log-contact"]', root);
+  if (lc) lc.addEventListener("click", () => openFollowUp(v.id));
+  const aq = $('[data-act="add-quote"]', root);
+  if (aq) aq.addEventListener("click", () => openQuoteModal(v.id));
   const enq = $('[data-act="enquiry"]', root); if (enq) enq.addEventListener("click", () => openEnquiryModal(v));
   $$("[data-status]", root).forEach(b => b.addEventListener("click", () => {
     if (v.status === b.dataset.status) return;
@@ -7236,7 +7346,7 @@ function wireVenue(id, root){
 function viewCompare(){
   const g = +state.meta.expectedGuests || 90;
   const fd = focusDate();
-  const rows = state.venues.filter(v => (v.quotes||[]).length && v.status !== "passed")
+  const rows = visibleVenues().filter(v => (v.quotes||[]).length && phaseOf(v) !== "cleanup")
     .map(v => ({v, q:bestQuote(v)}))
     .sort((a,b) => quoteTrueTotal(a.q,g) - quoteTrueTotal(b.q,g));
   const mark = ok => ok ? `<span class="tick">✓</span>` : `<span class="cross">—</span>`;
@@ -7537,24 +7647,29 @@ ${names} \u00b7 [phone] \u00b7 [email]`;
 /* ---------- venue & quote modals ---------- */
 function openVenueModal(v){
   const isNew = !v;
-  v = v || {id:uid(), name:"", region:"", country:"Italy", style:"", capacity:"", email:"", phone:"", url:"", status:"toContact", lastContact:null, availability:{}, contactLog:[], quotes:[], ratings:{}, notes:""};
+  v = v || {id:uid(), name:"", region:"", country:"Italy", style:"", capacity:"", email:"", phone:"", url:"", status:"research",
+    useCeremony:false, useReception:false, sleeps:false, lastContact:null, availability:{}, contactLog:[], quotes:[], ratings:{}, notes:""};
   openModal(isNew ? "Add a venue" : "Edit venue", `
-    <div class="field"><label>Name</label><input id="f-name" value="${esc(v.name)}" placeholder="Villa …"></div>
+    <div class="field"><label>Name</label><input id="f-name" value="${esc(v.name)}" placeholder="Villa \u2026"></div>
     <div class="fields2">
       <div class="field"><label>Region / area</label><input id="f-region" value="${esc(v.region)}" placeholder="Amalfi Coast"></div>
       <div class="field"><label>Country</label><input id="f-country" value="${esc(v.country)}" placeholder="Italy"></div>
     </div>
     <div class="fields2">
-      <div class="field"><label>Style</label><input id="f-style" value="${esc(v.style)}" placeholder="Clifftop terrace, stone ruin…"></div>
+      <div class="field"><label>Style</label><input id="f-style" value="${esc(v.style)}" placeholder="Clifftop terrace, stone ruin\u2026"></div>
       <div class="field"><label>Capacity (guests)</label><input id="f-cap" type="number" min="0" value="${esc(v.capacity)}"></div>
     </div>
-    <div class="fields2">
+    <div class="sect" style="margin-top:4px">What it\u2019s for</div>
+    <label class="check"><input type="checkbox" id="f-cer" ${v.useCeremony?"checked":""}> Could host the ceremony</label>
+    <label class="check"><input type="checkbox" id="f-rec" ${v.useReception?"checked":""}> Could host the reception</label>
+    <label class="check"><input type="checkbox" id="f-sleeps" ${v.sleeps?"checked":""}> Sleeps everyone on-site</label>
+    <div class="fields2" style="margin-top:8px">
       <div class="field"><label>Email</label><input id="f-email" type="email" value="${esc(v.email)}"></div>
       <div class="field"><label>Phone</label><input id="f-phone" value="${esc(v.phone)}"></div>
     </div>
-    <div class="field"><label>Website / Instagram</label><input id="f-url" type="url" value="${esc(v.url)}" placeholder="https://…"></div>
+    <div class="field"><label>Website / Instagram</label><input id="f-url" type="url" value="${esc(v.url)}" placeholder="https://\u2026"></div>
     <div class="fields2">
-      <div class="field"><label>Stage</label><select id="f-status">${STATUSES.map(s => `<option value="${s.id}" ${v.status===s.id?"selected":""}>${s.label}</option>`).join("")}</select></div>
+      <div class="field"><label>Phase</label><select id="f-status">${VENUE_PHASES.map(p => `<option value="${p.id}" ${phaseOf(v)===p.id?"selected":""}>${p.label}</option>`).join("")}</select></div>
       <div class="field"><label>Last contact</label><input id="f-lc" type="date" value="${esc(v.lastContact||"")}"></div>
     </div>`,
     [{label: isNew ? "Add venue" : "Save changes", primary:true, onClick(m, close){
@@ -7562,11 +7677,12 @@ function openVenueModal(v){
       Object.assign(v, {
         name, region:$("#f-region",m).value.trim(), country:$("#f-country",m).value.trim(),
         style:$("#f-style",m).value.trim(), capacity:+$("#f-cap",m).value || "",
+        useCeremony:$("#f-cer",m).checked, useReception:$("#f-rec",m).checked, sleeps:$("#f-sleeps",m).checked,
         email:$("#f-email",m).value.trim(), phone:$("#f-phone",m).value.trim(), url:$("#f-url",m).value.trim(),
         status:$("#f-status",m).value, lastContact:$("#f-lc",m).value || null, sample:false
       });
       saveDoc("venues", v);
-      logActivity(isNew ? `added venue “${v.name}”` : `updated “${v.name}”`);
+      logActivity(isNew ? `added venue \u201c${v.name}\u201d` : `updated \u201c${v.name}\u201d`);
       close(); if (isNew) go("#/venues/" + v.id);
     }}]);
 }
@@ -7629,7 +7745,6 @@ function openQuoteModal(venueId, q){
       v.quotes = v.quotes || [];
       const i = v.quotes.findIndex(x => x.id === q.id);
       if (i >= 0) v.quotes[i] = q; else v.quotes.push(q);
-      if (v.status === "toContact" || v.status === "emailed") v.status = "quoted";
       saveDoc("venues", v);
       logActivity(`${isNew ? "added" : "updated"} a quote for “${v.name}” (${money(q.total, q.currency)})`);
       close();
@@ -7650,7 +7765,7 @@ function openFollowUp(venueId){
   openModal(`Log contact — ${esc(v.name)}`, `
     <div class="fields2">
       <div class="field"><label>What happened</label><select id="c-type">
-        ${["Email sent","Reply received","Phone call","Visit","Other"].map(t => `<option>${t}</option>`).join("")}</select></div>
+        ${["Email sent","Reply received","Phone call","Other"].map(t => `<option>${t}</option>`).join("")}</select></div>
       <div class="field"><label>When</label><input id="c-date" type="date" value="${todayISO()}"></div>
     </div>
     <div class="field"><label>Note</label><input id="c-note" placeholder="Asked again about December pricing…"></div>`,
@@ -7658,8 +7773,6 @@ function openFollowUp(venueId){
       const entry = {ts:$("#c-date",m).value || todayISO(), type:$("#c-type",m).value, note:$("#c-note",m).value.trim()};
       v.contactLog = v.contactLog || []; v.contactLog.push(entry);
       v.lastContact = entry.ts;
-      if (entry.type === "Reply received" && v.status === "emailed") v.status = "quoted";
-      if (entry.type === "Email sent" && v.status === "toContact") v.status = "emailed";
       saveDoc("venues", v); logActivity(`logged “${entry.type}” for ${v.name}`); close();
     }}]);
 }
@@ -7917,10 +8030,10 @@ function viewGuests(){
   </div>
   ${subtabsHTML("guests", [["","Guest list"],["seating","Seating"],["page","Guest page"]], "")}
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:14px">
-    <div class="card"><div class="dim small">Invited</div><div class="serif" style="font-size:28px">${gs.length}</div></div>
-    <div class="card"><div class="dim small">Coming</div><div class="serif" style="font-size:28px" data-t="yescount">${headcountYes()}</div><div class="note">people — whole parties counted</div></div>
-    <div class="card"><div class="dim small">Pending</div><div class="serif" style="font-size:28px">${pend.length}</div></div>
-    <div class="card"><div class="dim small">Declined</div><div class="serif" style="font-size:28px">${no.length}</div></div>
+    <div class="card"><div class="dim small">Invited</div><div class="serif" style="font-size:28px">${gs.reduce((n,x) => n + partyOf(x), 0)}</div><div class="note">people · ${plural(gs.length,"party","parties")}</div></div>
+    <div class="card"><div class="dim small">Coming</div><div class="serif" style="font-size:28px" data-t="yescount">${headcountYes()}</div><div class="note">people · ${plural(yes.length,"party","parties")}</div></div>
+    <div class="card"><div class="dim small">Pending</div><div class="serif" style="font-size:28px">${pend.reduce((n,x) => n + partyOf(x), 0)}</div><div class="note">people · ${plural(pend.length,"party","parties")}</div></div>
+    <div class="card"><div class="dim small">Declined</div><div class="serif" style="font-size:28px">${no.reduce((n,x) => n + partyOf(x), 0)}</div><div class="note">people · ${plural(no.length,"party","parties")}</div></div>
     ${(() => { const p = k => gs.filter(g => g.abroad === k).reduce((n,g) => n + partyOf(g), 0);
       const y = p("yes"), mb = p("maybe"), nn = p("no");
       return (y || mb || nn) ? `<div class="card"><div class="dim small">OK to go abroad</div><div class="serif" style="font-size:28px">${y}</div><div class="note">${mb} maybe · ${nn} can\u2019t — of ${gs.reduce((n,g)=>n+partyOf(g),0)} people</div></div>` : ""; })()}
@@ -8512,7 +8625,7 @@ function viewSettings(){
         <div class="note" style="margin-top:8px">Unlocking turns “months before” deadlines back into estimates.</div>`
       : `<p class="muted" style="margin-top:12px">No date locked yet. Vote on the Dates page, then lock the winner.</p>`}
       <hr class="hr">
-      <div class="field"><label>Total budget (optional) — sets the cap on the Budget page</label><input id="s-cap" type="number" min="0" step="500" value="${esc(state.meta.budgetCap||"")}" placeholder="e.g. 30000"></div>
+      ${isHelper() ? "" : `<div class="field"><label>Total budget (optional) — sets the cap on the Budget page</label><input id="s-cap" type="number" min="0" step="500" value="${esc(state.meta.budgetCap||"")}" placeholder="e.g. 30000"></div>`}
     </div>
   </div>
   <div class="sect">The four of you</div>
@@ -8528,16 +8641,16 @@ function viewSettings(){
   </div>
   <div class="sect">Data & connection</div>
   <div class="grid cols-2">
-    <div class="card">
+    ${isHelper() ? "" : `<div class="card">
       <h3>Backup</h3>
       <p class="note" style="margin:10px 0 12px">Everything — venues, quotes, votes, tasks — as one JSON file. Keep one before big changes.</p>
       <button class="btn" data-act="export">Export a backup</button>
-    </div>
-    <div class="card">
+    </div>`}
+    ${isHelper() ? "" : `<div class="card">
       <h3>Your imported venues & guests</h3>
       <p class="note" style="margin:10px 0 12px">This build carries your ${SEED.venues.length} venues and ${SEED.guests.length} guest parties from the old planner and Notion. A fresh database gets them automatically; if yours already has data, this writes them in and clears the old samples.</p>
       <button class="btn" data-act="import-real">Write them to the database</button>
-    </div>
+    </div>`}
     <div class="card">
       <h3>Connection</h3>
       ${state.mode === "firebase"

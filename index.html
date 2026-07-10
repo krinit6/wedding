@@ -8025,6 +8025,63 @@ function saveFileRecord(ownerId, kind, name, mime, dataUrl, thumb){
   saveDoc("files", {id, ownerId, venueId: ownerId, kind, name, mime, size: Math.round(data.length*3/4), chunks, head, thumb: thumb || "", ts: Date.now(), by: me().id});
   return id;
 }
+function loadScript(u){ return new Promise((res, rej) => { const s = document.createElement("script"); s.src = u; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+let _driveToken = null;
+async function openDrivePicker(){
+  const cfg = (window.STEFANA || {}).google || {};
+  if (!cfg.apiKey || !cfg.clientId) throw new Error("no-config");
+  if (!(window.google && window.google.accounts)) await loadScript("https://accounts.google.com/gsi/client");
+  if (!window.gapi) await loadScript("https://apis.google.com/js/api.js");
+  await new Promise(res => gapi.load("picker", res));
+  if (!_driveToken) _driveToken = await new Promise((res, rej) => {
+    const tc = google.accounts.oauth2.initTokenClient({
+      client_id: cfg.clientId,
+      scope: "https://www.googleapis.com/auth/drive.readonly",
+      callback: t => (t && t.access_token) ? res(t.access_token) : rej(new Error("no-token"))
+    });
+    tc.requestAccessToken();
+  });
+  return new Promise(res => {
+    new google.picker.PickerBuilder()
+      .addView(new google.picker.DocsView().setIncludeFolders(true))
+      .setOAuthToken(_driveToken)
+      .setDeveloperKey(cfg.apiKey)
+      .setCallback(d => {
+        if (d.action === google.picker.Action.PICKED) res(d.docs || []);
+        else if (d.action === google.picker.Action.CANCEL) res([]);
+      })
+      .build().setVisible(true);
+  });
+}
+function saveDriveRecord(o, name, url, mime, size){
+  saveDoc("files", {id: uid(), ownerId: o.id, venueId: o.id, kind: "drive", name: name || "Drive file",
+    mime: mime || "", size: +size || 0, chunks: 0, head: "", thumb: "", url, ts: Date.now(), by: me().id});
+  logActivity(`attached \u201c${name || "a Drive file"}\u201d from Drive to ${o.name}`);
+}
+function pasteDriveLink(o){
+  openModal("Link a Drive file", `
+    <div class="field"><label>Name</label><input id="df-name" placeholder="Their quote \u00b7 Menu PDF \u00b7 Floor plan"></div>
+    <div class="field"><label>Drive link</label><input id="df-url" type="url" placeholder="https://drive.google.com/file/d/\u2026"></div>
+    <p class="note" style="margin:6px 0 0">Any size \u2014 the file stays in your Drive. Share it as \u201cAnyone with the link\u201d and it previews right inside the app.</p>`,
+    [{label:"Attach", primary:true, onClick(m, close){
+      const url = $("#df-url", m).value.trim();
+      if (!/^https?:\/\//i.test(url)) return toast("Paste a full URL (https://\u2026)");
+      saveDriveRecord(o, $("#df-name", m).value.trim(), url, "", 0);
+      toast("Drive file attached"); close();
+    }}]);
+}
+async function attachFromDrive(o){
+  const cfg = (window.STEFANA || {}).google || {};
+  if (!cfg.apiKey || !cfg.clientId) return pasteDriveLink(o);
+  try {
+    const docs = await openDrivePicker();
+    docs.forEach(d => saveDriveRecord(o, d.name, d.url || ("https://drive.google.com/file/d/" + d.id + "/view"), d.mimeType, d.sizeBytes));
+    if (docs.length) toast(`Attached ${plural(docs.length, "Drive file")}`);
+  } catch(e){
+    toast("Drive picker unavailable \u2014 paste the link instead");
+    pasteDriveLink(o);
+  }
+}
 async function loadFileDataUrl(f){
   if (!f.chunks) return f.thumb;
   const parts = await adapter.loadChunks(f.id, f.chunks);
@@ -8113,6 +8170,7 @@ function mediaCardHTML(o){
       <div class="row" style="gap:8px">
         <button class="btn sm" data-act="add-photos">${I.camera} Add photos</button>
         <button class="btn sm" data-act="add-pdf">${I.clip} Attach a file</button>
+        <button class="btn sm" data-act="add-drive">${I.clip} From Drive</button>
       </div>
     </div>
     <input type="file" id="ph-in" accept="image/*" multiple hidden>
@@ -8127,7 +8185,7 @@ function mediaCardHTML(o){
     ${pdfs.length ? `<div class="stack" style="margin-top:12px">
       ${pdfs.map(f => `<div class="frow">${I.clip}
         <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span>
-        <span class="note">${fmtSize(f.size)}</span>
+        <span class="note">${f.url ? "Drive" : fmtSize(f.size)}</span>
         <button class="btn sm" data-open-pdf="${f.id}">Open</button>
         <button class="btn sm danger" data-del-file="${f.id}">${I.trash}</button>
       </div>`).join("")}
@@ -8137,13 +8195,15 @@ function mediaCardHTML(o){
 function wireMediaCard(o, root){
   $$("[data-open-img]", root).forEach(b => b.addEventListener("click", () => openLightbox(o, b.dataset.openImg)));
   $$("[data-open-pdf]", root).forEach(b => b.addEventListener("click", () => {
-    const f = state.files.find(x => x.id === b.dataset.openPdf); if (f) openPdf(f); }));
+    const f = state.files.find(x => x.id === b.dataset.openPdf); if (!f) return;
+    if (f.url) openLinkPreview(f.name, f.url); else openPdf(f); }));
   $$("[data-del-file]", root).forEach(b => b.addEventListener("click", async () => {
     const f = state.files.find(x => x.id === b.dataset.delFile); if (!f) return;
     if (await confirmDlg(`Delete <b>${esc(f.name)}</b>?`)) deleteFile(o, f); }));
   const phIn = $("#ph-in", root), pdfIn = $("#pdf-in", root), coll = ownerColl(o);
   const ap = $('[data-act="add-photos"]', root); if (ap) ap.addEventListener("click", () => phIn.click());
   const af = $('[data-act="add-pdf"]', root); if (af) af.addEventListener("click", () => pdfIn.click());
+  const ad = $('[data-act="add-drive"]', root); if (ad) ad.addEventListener("click", () => attachFromDrive(o));
   if (phIn) phIn.addEventListener("change", async () => {
     const list = [...phIn.files]; phIn.value = "";
     if (!list.length) return;
@@ -8161,7 +8221,7 @@ function wireMediaCard(o, root){
   if (pdfIn) pdfIn.addEventListener("change", () => {
     const file = pdfIn.files[0]; pdfIn.value = "";
     if (!file) return;
-    if (file.size > 8 * 1024 * 1024) return toast("That file is over 8 MB — link it from Drive instead.");
+    if (file.size > 8 * 1024 * 1024) return toast("That file is over 8 MB \u2014 use \u2018From Drive\u2019 instead: it attaches any size without storing bytes here.");
     const r = new FileReader();
     r.onload = () => { saveFileRecord(o.id, "pdf", file.name, file.type || "application/pdf", r.result, "");
       logActivity(`attached “${file.name}” to ${o.name}`); toast("File attached"); };

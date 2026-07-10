@@ -39,6 +39,32 @@
   --bulb-a:#ECB25B; --bulb-b:#EE9A70; --bulb-c:#8CA7CE; --wire:#8A7147;
   --glow:rgba(226,164,69,.4); --shadow:70,60,35; --btn-ink:#3C2A08;
 }
+/* ---- SUMMER \u00b7 golden hour & sea: sun-bleached sand, azure, terracotta ---- */
+[data-theme="summer"]{
+  --bg:#FBF9F1; --card:#FFFFFF; --card2:#F3F1E4; --inset:#F6F4E9;
+  --wash1:rgba(233,184,76,.10); --wash2:rgba(111,169,201,.12);
+  --ink:#2E3236; --head:#B4622A; --sub:#63707A; --faint:#93A0A6;
+  --line:#E7E4D4; --line2:#D2CFBD; --frame:#D9C08F;
+  --accent:#E9B84C; --accent-ink:#8F6A12; --accent-deep:#CE9A2F; --accent-soft:#FBEFCB;
+  --berry:#C75B4A; --berry-soft:#F8E4DE;
+  --ever:#3E8E8C; --ever-soft:#E1F0EE;
+  --leaf:#8FA05A; --blush:#F2A97E; --misty:#6FA9C9;
+  --bulb-a:#F2C463; --bulb-b:#F2A97E; --bulb-c:#7FC0D8; --wire:#9A8756;
+  --glow:rgba(233,190,100,.42); --shadow:70,64,40; --btn-ink:#3B2B06;
+}
+/* ---- AUTUMN \u00b7 amber harvest: rust, olive, plum, candle smoke ---- */
+[data-theme="autumn"]{
+  --bg:#F8F2E6; --card:#FFFDF6; --card2:#F1E8D7; --inset:#F4EDDE;
+  --wash1:rgba(201,126,44,.12); --wash2:rgba(143,61,82,.08);
+  --ink:#35302A; --head:#9C4A1E; --sub:#6E6A58; --faint:#9A937E;
+  --line:#E7DECB; --line2:#D5CAB2; --frame:#D8B98B;
+  --accent:#C97E2C; --accent-ink:#7D4C0F; --accent-deep:#A96520; --accent-soft:#F5E4C8;
+  --berry:#8F3D52; --berry-soft:#F1DFE5;
+  --ever:#6B7A3A; --ever-soft:#ECEFDB;
+  --leaf:#97803C; --blush:#E09A6B; --misty:#8E9DB0;
+  --bulb-a:#E0A94E; --bulb-b:#D77A55; --bulb-c:#A8B36A; --wire:#8B6E3E;
+  --glow:rgba(214,150,60,.42); --shadow:66,54,34; --btn-ink:#3A2606;
+}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;background:var(--bg)}
 body{margin:0;color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
@@ -417,6 +443,8 @@ const I = {
   compare:'<svg viewBox="0 0 24 24"><path d="M9 4v16M4.5 8.5 9 4l4.5 4.5"/><path d="M15 20V4M19.5 15.5 15 20l-4.5-4.5"/></svg>',
   snow:   '<svg viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/></svg>',
   bloom:  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="5.8" r="2.9"/><circle cx="17.9" cy="10.1" r="2.9"/><circle cx="15.7" cy="17" r="2.9"/><circle cx="8.3" cy="17" r="2.9"/><circle cx="6.1" cy="10.1" r="2.9"/></svg>',
+  sun:    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg>',
+  leaf:   '<svg viewBox="0 0 24 24"><path d="M19.5 4.5C10.5 4.5 5 10 4.5 19.5c9.5-.5 15-6 15-15z"/><path d="M5.5 18.5C9.5 14.5 13 11 17.5 6.5"/></svg>',
   g:      '<svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 1 6.4-15.4l-2.6 2.6A5.4 5.4 0 1 0 17.4 12H12"/></svg>',
   users:  '<svg viewBox="0 0 24 24"><circle cx="9" cy="8.3" r="3.1"/><path d="M3.6 19c.6-3.1 2.7-4.9 5.4-4.9s4.8 1.8 5.4 4.9"/><circle cx="17" cy="9.4" r="2.5"/><path d="M15.8 13.8c2.3.3 4 1.8 4.6 4.4"/></svg>',
   camera: '<svg viewBox="0 0 24 24"><path d="M4 8.5h3l1.6-2.3h6.8L17 8.5h3a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.5" r="3.4"/></svg>',
@@ -5910,38 +5938,6 @@ const SEED = {
  "useReception": true
  },
 {
- "id": "il-kartell",
- "name": "Il-Kartell",
- "region": "Marsalforn, Gozo",
- "country": "Malta",
- "flag": "🇲🇹",
- "style": "water’s-edge canopied terrace on Marsalforn Bay — stone-arched former boathouses for winter dining, family-run since 1973",
- "capacity": "",
- "status": "research",
- "email": "",
- "phone": "",
- "url": "https://www.kartellrestaurant.com",
- "lastContact": null,
- "notes": "Reception only — pair with a Ta’ Ċenċ cliff or Lunzjata Valley ceremony, both a short Gozo drive. Party check: the terrace is outdoors, so hard 11pm stop for music; the stone boathouse rooms are the indoor fallback. Realistically a long dinner-and-wine evening, not a dance floor.",
- "availability": {},
- "contactLog": [],
- "quotes": [],
- "ratings": {},
- "vibes": ["coastal"],
- "seasons": ["sp", "su", "au", "wi"],
- "sleeps": false,
- "verified": false,
- "bedsIncluded": false,
- "estTotal": 1800,
- "priceNote": "Casual seafood by the sea — historic set menus around €28.50; a relaxed wedding dinner for 35 plausibly €1.6–2.2k. The fisherman-owner lands the fish daily.",
- "estIsEstimate": true,
- "stay": "",
- "pitch": "tables at the waterline, ferry lights across the bay, grilled catch of the day — the easy-going seaside dinner",
- "oldScore": 0,
- "useCeremony": false,
- "useReception": true
- },
-{
  "id": "diar-il-bniet",
  "name": "Diar il-Bniet",
  "region": "Ħad-Dingli, Malta",
@@ -5954,7 +5950,7 @@ const SEED = {
  "phone": "+356 2762 0727",
  "url": "https://diarilbniet.com",
  "lastContact": null,
- "notes": "Reception only — the natural pairing is golden-hour vows at Dingli Cliffs just up the road, then walk to dinner. Party check: they run live-music summer evenings, but it’s a village house — outdoor music stops at 11pm and the cellar is intimate. Dinner first; take the dancing elsewhere.",
+ "notes": "Reception only — the natural pairing is golden-hour vows at Dingli Cliffs just up the road, then walk to dinner. Party check: they run live-music summer evenings, but it’s a village house — outdoor music stops at 11pm and the cellar is intimate. Dinner first; take the dancing elsewhere. UPDATE: follow-up research suggests this rural site may fall under Malta’s farmhouse music exemption — call +356 2762 0727 for their real cut-off before ruling the dancing out.",
  "availability": {},
  "contactLog": [],
  "quotes": [],
@@ -5971,6 +5967,198 @@ const SEED = {
  "pitch": "a farm dinner where the vegetables were picked that morning 200 metres away — wine-cellar privacy, village warmth",
  "oldScore": 0,
  "useCeremony": false,
+ "useReception": true
+ },
+{
+ "id": "villa-arrigo",
+ "name": "Villa Arrigo",
+ "region": "Naxxar, Malta",
+ "country": "Malta",
+ "flag": "🇲🇹",
+ "style": "colonial villa with citrus gardens and fountains — all-glass soundproof Grand Marquee dressed in twinkle-light curtains",
+ "capacity": "",
+ "status": "research",
+ "email": "info@osbornecaterers.com",
+ "phone": "+356 2142 3214",
+ "url": "https://villaarrigomalta.com",
+ "lastContact": null,
+ "notes": "CONFIRMED late party: garden music to 11pm, then the Grand Marquee runs to 3am (soundproof, in-house rig). More manicured-garden than raw stone — dress it intimately at 35 or it echoes.",
+ "availability": {},
+ "contactLog": [],
+ "quotes": [],
+ "ratings": {},
+ "vibes": ["courtyard lights", "party-till-late"],
+ "seasons": ["sp", "su", "au", "wi"],
+ "sleeps": false,
+ "verified": false,
+ "bedsIncluded": false,
+ "estTotal": 0,
+ "priceNote": "Quote-only (in-house Osborne Caterers) with an explicit weekday discount — a weekday 35-guest date is plausibly inside €13k. Viewings Wednesdays 09:30–19:00.",
+ "estIsEstimate": false,
+ "stay": "",
+ "pitch": "dinner in the citrus garden, then the whole party moves into the soundproof marquee — built-in sound system so good DJs rarely bring their own",
+ "oldScore": 0,
+ "useCeremony": true,
+ "useReception": true
+ },
+{
+ "id": "olive-gardens-mdina",
+ "name": "Olive Gardens",
+ "region": "Mdina, Malta",
+ "country": "Malta",
+ "flag": "🇲🇹",
+ "style": "olive groves and bougainvillea nooks under the lit Mdina bastions — stone terraces, lower courtyard with bar and dance floor",
+ "capacity": "",
+ "status": "research",
+ "email": "info@camillericatering.com",
+ "phone": "+356 2147 2255",
+ "url": "https://camillericatering.com.mt",
+ "lastContact": null,
+ "notes": "CONFIRMED late party: licensed for amplified music until 4am — rare for an open venue. Built for 200+, so insist on one intimately dressed zone (lower courtyard) or 35 guests will rattle.",
+ "availability": {},
+ "contactLog": [],
+ "quotes": [],
+ "ratings": {},
+ "vibes": ["countryside & vines", "courtyard lights", "party-till-late"],
+ "seasons": ["sp", "su", "au", "wi"],
+ "sleeps": false,
+ "verified": false,
+ "bedsIncluded": false,
+ "estTotal": 0,
+ "priceNote": "In-house Camilleri Catering (est. 1843), quote-only, mid-range — plausibly near budget at 30–40 if they price a single zone.",
+ "estIsEstimate": false,
+ "stay": "",
+ "pitch": "an olive-grove dinner with the floodlit bastions behind you — and a licence that outlasts every other garden in Malta",
+ "oldScore": 0,
+ "useCeremony": true,
+ "useReception": true
+ },
+{
+ "id": "ta-betta",
+ "name": "Ta’ Betta Wine Estates",
+ "region": "Girgenti, Siġġiewi, Malta",
+ "country": "Malta",
+ "flag": "🇲🇹",
+ "style": "honey-limestone wine estate — arched doorways, shaded loggias, vine rows and olive groves facing Mdina at golden hour",
+ "capacity": "",
+ "status": "research",
+ "email": "info@tabetta.com",
+ "phone": "+356 7977 4477",
+ "url": "https://tabetta.com",
+ "lastContact": null,
+ "notes": "Sized for exactly you (20–80 guests). VERIFY the music cut-off in writing: the winery interior is used for after-parties and it’s rural, but no published end-time.",
+ "availability": {},
+ "contactLog": [],
+ "quotes": [],
+ "ratings": {},
+ "vibes": ["countryside & vines", "stone & castle"],
+ "seasons": ["sp", "su", "au", "wi"],
+ "sleeps": false,
+ "verified": false,
+ "bedsIncluded": false,
+ "estTotal": 0,
+ "priceNote": "Aggregator basis ~£12,555 for 50 guests — at 30–40 it can sit near €13k but leaves thin margin for the stay (none on-site). Ask for GM Marie Choquet.",
+ "estIsEstimate": false,
+ "stay": "",
+ "pitch": "‘Tuscany with a Maltese flair’ — dinner in the loggia, dancing under the stars, the winery interior as the after-party room",
+ "oldScore": 0,
+ "useCeremony": true,
+ "useReception": true
+ },
+{
+ "id": "xara-lodge",
+ "name": "The Xara Lodge",
+ "region": "Rabat, Malta",
+ "country": "Malta",
+ "flag": "🇲🇹",
+ "style": "purpose-built country estate below Mdina’s floodlit bastions — Olive Room, Lavender Room, poolside Drawing Room",
+ "capacity": "",
+ "status": "research",
+ "email": "events@xaracollection.com",
+ "phone": "+356 2256 7567",
+ "url": "",
+ "lastContact": null,
+ "notes": "CONFIRMED late party, weakest aesthetic fit of the shortlist — more event-venue than historic stone. Use the smaller rooms to make 35 feel warm. Same group as the Xara Palace (sleep there, party here).",
+ "availability": {},
+ "contactLog": [],
+ "quotes": [],
+ "ratings": {},
+ "vibes": ["countryside & vines", "party-till-late"],
+ "seasons": ["sp", "su", "au", "wi"],
+ "sleeps": false,
+ "verified": false,
+ "bedsIncluded": false,
+ "estTotal": 0,
+ "priceNote": "In-house Xara Catering with seasonal hire discounts (50% off many Fri/Sun dates) — possible within budget on a discounted date.",
+ "estIsEstimate": false,
+ "stay": "",
+ "pitch": "the venue that literally markets itself as ‘unconstrained by time limitations or sound constrictions’ — the party runs as late as you do",
+ "oldScore": 0,
+ "useCeremony": true,
+ "useReception": true
+ },
+{
+ "id": "pergola-farmhouses",
+ "name": "Pergola Farmhouses",
+ "region": "Xagħra, Gozo",
+ "country": "Malta",
+ "flag": "🇲🇹",
+ "style": "cluster of exclusive-use Gozitan stone farmhouses — vine pergolas, pool terraces, valley views, star-lit dinners",
+ "capacity": "",
+ "status": "research",
+ "email": "",
+ "phone": "",
+ "url": "",
+ "lastContact": null,
+ "notes": "Farmhouse exemption applies in principle, but VERIFY amplified-music tolerance for the specific property — these sit in villages with neighbours. Also via Jules Gozo Holidays (julesgozoholidays.com).",
+ "availability": {},
+ "contactLog": [],
+ "quotes": [],
+ "ratings": {},
+ "vibes": ["countryside & vines", "party-till-late"],
+ "seasons": ["sp", "su", "au", "wi"],
+ "sleeps": true,
+ "verified": false,
+ "bedsIncluded": false,
+ "estTotal": 0,
+ "priceNote": "The budget-safest route: the rental doubles as venue + accommodation; add your own caterer, bar and DJ. Surest way to keep 30–40 guests, a real late party and a 2-night stay under €13k — at the cost of self-assembly and needing a Gozo coordinator.",
+ "estIsEstimate": false,
+ "stay": "The venue IS the stay — each farmhouse sleeps 8–13, so the whole party lives on-site for the weekend",
+ "pitch": "rent the hamlet: ceremony on the terrace, long table under the pergola, dancing by the pool, and everyone stumbles ten metres to bed",
+ "oldScore": 0,
+ "useCeremony": true,
+ "useReception": true
+ },
+{
+ "id": "meridiana-estate",
+ "name": "Meridiana Wine Estate",
+ "region": "Ta’ Qali, Malta",
+ "country": "Malta",
+ "flag": "🇲🇹",
+ "style": "working vineyard with an underground barrel cellar, function rooms and terraces facing Mdina",
+ "capacity": "",
+ "status": "research",
+ "email": "events@meridiana.com.mt",
+ "phone": "",
+ "url": "http://meridiana.com.mt",
+ "lastContact": null,
+ "notes": "VERIFY: music cut-off and DJ policy not published — the underground cellar should legally carry music past 11pm (not audible outside), but get it in writing.",
+ "availability": {},
+ "contactLog": [],
+ "quotes": [],
+ "ratings": {},
+ "vibes": ["countryside & vines"],
+ "seasons": ["sp", "su", "au", "wi"],
+ "sleeps": false,
+ "verified": false,
+ "bedsIncluded": false,
+ "estTotal": 0,
+ "priceNote": "Tailor-made private events, quote-only; ~100 seated capacity so 35 fits comfortably.",
+ "estIsEstimate": false,
+ "stay": "",
+ "pitch": "dinner among the vines, after-party in the underground cellar where the music bothers nobody",
+ "oldScore": 0,
+ "useCeremony": true,
  "useReception": true
  }
 ],
@@ -6947,7 +7135,8 @@ function sprigs(){
   const flower = (cx,cy,r) => { const pts = [[0,-1],[.95,-.31],[.59,.81],[-.59,.81],[-.95,-.31]];
     return `<g>${pts.map(([px,py]) => `<circle cx="${(cx+px*r*1.65).toFixed(1)}" cy="${(cy+py*r*1.65).toFixed(1)}" r="${r}" fill="var(--blush)"/>`).join("")}<circle cx="${cx}" cy="${cy}" r="${(r*.72).toFixed(1)}" fill="var(--accent)"/></g>`; };
   const bloom = `<svg class="sprig tl" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 70 C 28 54 40 40 60 16" fill="none" stroke="var(--leaf)" stroke-width="1.7" stroke-linecap="round"/><path d="M30 50 q-11 -1 -14 -12 q11 1 14 12z" fill="var(--leaf)"/><path d="M40 39 q3 -11 14 -13 q-3 11 -14 13z" fill="var(--leaf)"/>${flower(60,16,3.4)}${flower(44,33,2.8)}${flower(22,58,2.3)}</svg>`;
-  const s = curTheme() === "winter" ? pine : bloom;
+  const th = curTheme();
+  const s = (th === "winter" || th === "autumn") ? pine : bloom;
   return s + s.replace('class="sprig tl"', 'class="sprig br"');
 }
 const memberById = id => state.members.find(m => m.id === id);
@@ -7155,6 +7344,26 @@ function quoteTrueTotal(q, guests){
   if (q.inclusions?.catering === "perHead") t += (+q.inclusions.cateringPerHead || 0) * guests;
   return t;
 }
+const QUOTE_CONF = { estimate:{txt:"estimate", cls:"wax"}, written:{txt:"quoted in writing", cls:""}, verified:{txt:"\u2713 verified", cls:"olive"} };
+const quoteConf = q => QUOTE_CONF[q && q.conf] ? q.conf : "written";
+const venueVerified = v => !!v.verified || (v.quotes||[]).some(q => quoteConf(q) === "verified");
+function driveEmbed(url){
+  let m = /drive\.google\.com\/file\/d\/([\w-]+)/.exec(url || ""); if (m) return "https://drive.google.com/file/d/" + m[1] + "/preview";
+  m = /docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([\w-]+)/.exec(url || ""); if (m) return "https://docs.google.com/" + m[1] + "/d/" + m[2] + "/preview";
+  m = /drive\.google\.com\/open\?id=([\w-]+)/.exec(url || ""); if (m) return "https://drive.google.com/file/d/" + m[1] + "/preview";
+  if (/\.pdf(\?|#|$)/i.test(url || "")) return url;
+  return null;
+}
+function openLinkPreview(label, url, onRemove){
+  const emb = driveEmbed(url);
+  const btns = [{label:"Open in a new tab", primary:true, onClick(){ window.open(url, "_blank", "noopener"); }}];
+  if (onRemove && !isHelper()) btns.unshift({label:"Remove this link", onClick(m, close){ onRemove(); close(); }});
+  openModal(label || "Document", emb
+    ? `<iframe src="${esc(emb)}" style="width:100%;height:min(68vh,620px);border:1px solid var(--line);border-radius:12px;background:#fff"></iframe>
+       <p class="note" style="margin:10px 0 0">If Drive asks for access, the file isn\u2019t shared \u2014 in Drive, set it to \u201cAnyone with the link\u201d.</p>`
+    : `<p style="margin:0 0 4px;word-break:break-all">${esc(url)}</p><p class="note" style="margin:0">This link can\u2019t be embedded here \u2014 it opens in a new tab.</p>`,
+    btns);
+}
 function bestQuote(v){
   const g = +state.meta.expectedGuests || 90;
   if (!v.quotes?.length) return null;
@@ -7208,9 +7417,30 @@ function subtabsHTML(base, items, cur){
 const navHTML = cur => NAV.filter(n => !(isHelper() && (n.id === "guests" || n.id === "budget"))).map(n =>
   `<button class="navbtn ${cur===n.id?"on":""}" data-nav="${n.id}" aria-label="${n.label}">${n.icon}<span>${n.label}</span></button>`).join("");
 
+const SEASON_THEME = { sp:"spring", su:"summer", au:"autumn", wi:"winter" };
+const THEME_SEASON = { spring:"sp", summer:"su", autumn:"au", winter:"wi" };
+function applyTheme(){
+  let t = curTheme();
+  try {
+    const r = routes();
+    if (r.page === "venues" && r.id){
+      const v = state.venues.find(x => x.id === r.id);
+      const ss = (v && v.seasons) || [];
+      if (v && ss.length && !ss.includes(THEME_SEASON[t])) t = SEASON_THEME[ss[0]] || t;
+    }
+  } catch(e){}
+  document.documentElement.dataset.theme = t;
+}
 function render(){
   const root = $("#app");
-  document.documentElement.dataset.theme = curTheme();
+  applyTheme();
+  const _ae = document.activeElement;
+  const _keep = _ae && root.contains(_ae) && /^(INPUT|TEXTAREA|SELECT)$/.test(_ae.tagName) && (_ae.id || _ae.hasAttribute("data-vsearch"))
+    ? { sel: _ae.id ? "#" + (window.CSS && CSS.escape ? CSS.escape(_ae.id) : _ae.id) : "[data-vsearch]", s: _ae.selectionStart, e: _ae.selectionEnd } : null;
+  if (_keep) requestAnimationFrame(() => {
+    const el = $(_keep.sel, root);
+    if (el && document.activeElement !== el){ el.focus(); if (_keep.s != null && el.setSelectionRange) try { el.setSelectionRange(_keep.s, _keep.e); } catch(e){} }
+  });
   if (!state.booted){
     root.innerHTML = `<div class="authwrap"><div class="muted">Stringing up the lights…</div></div>`;
     return;
@@ -7260,6 +7490,8 @@ function render(){
           <div class="ttoggle" role="group" aria-label="Color palette">
             <button class="tt ${th==="winter"?"on":""}" data-settheme="winter" title="Winter palette">${I.snow}<span>Winter</span></button>
             <button class="tt ${th==="spring"?"on":""}" data-settheme="spring" title="Spring palette">${I.bloom}<span>Spring</span></button>
+            <button class="tt ${th==="summer"?"on":""}" data-settheme="summer" title="Summer palette">${I.sun}<span>Summer</span></button>
+            <button class="tt ${th==="autumn"?"on":""}" data-settheme="autumn" title="Autumn palette">${I.leaf}<span>Autumn</span></button>
           </div>
           ${state.mode === "demo" ? `
             <select id="member-switch" aria-label="Viewing as" style="width:auto;padding:6px 10px;font-size:13px">
@@ -7573,6 +7805,11 @@ function perGuestAllIn(q){
 }
 
 const vFilt = {use:"", stay:"", season:"", country:"", vibe:"", price:"", pmin:"", pmax:""};
+let vSearch = "";
+const fold = s => (s || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const venueHaystack = v => fold([v.name, v.region, v.country, v.style, v.pitch, v.notes, v.priceNote, v.stay,
+  ...(v.quotes || []).flatMap(q => [q.label, q.notes, q.total, (q.inclusions || {}).barNote]),
+  ...(v.links || []).map(l => l.label)].filter(Boolean).join(" \u00b7 "));
 const PHASE_RANK = {booked:0, shortlist:1, research:2, cleanup:3};
 const anyQuote = (v, test) => (v.quotes||[]).some(q => test(q.inclusions || {}));
 const venueText = v => [v.pitch, v.style, v.notes, v.stay, v.priceNote, v.region].filter(Boolean).join(" ").toLowerCase();
@@ -7582,6 +7819,7 @@ const useBadge = v => { const c = usesCeremony(v), r = usesReception(v);
   return c && r ? "Ceremony + reception" : c ? "Ceremony" : r ? "Reception" : ""; };
 const hasStay = v => !!v.sleeps || !!(v.stay||"").trim() || anyQuote(v, i => (i.accommodation||{}).included);
 function venueMatches(v){
+  if (vSearch.trim() && !venueHaystack(v).includes(fold(vSearch.trim()))) return false;
   if (vFilt.use === "ceremony" && !usesCeremony(v)) return false;
   if (vFilt.use === "reception" && !usesReception(v)) return false;
   if (vFilt.use === "both" && !(usesCeremony(v) && usesReception(v))) return false;
@@ -7590,8 +7828,8 @@ function venueMatches(v){
   if (vFilt.season && !(v.seasons||[]).includes(vFilt.season)) return false;
   if (vFilt.country && v.country !== vFilt.country) return false;
   if (vFilt.vibe && !(v.vibes||[]).includes(vFilt.vibe)) return false;
-  if (vFilt.price === "quote" && !(v.quotes||[]).length) return false;
-  if (vFilt.price === "verified" && !v.verified) return false;
+  if (vFilt.price === "quote" && !(v.quotes||[]).some(q => quoteConf(q) !== "estimate")) return false;
+  if (vFilt.price === "verified" && !venueVerified(v)) return false;
   const pmin = +vFilt.pmin || 0, pmax = +vFilt.pmax || 0;
   if (pmin || pmax){
     const p = venuePrice(v);
@@ -7644,6 +7882,7 @@ function viewVenues(){
   const sel = (key, opts) => `<select data-fsel="${key}" style="width:auto;max-width:200px;padding:7px 10px;font-size:13px">${opts}</select>`;
   const filterBar = `
   <div class="fbar" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+    <input data-vsearch type="search" placeholder="Search \u2014 name, region, notes, quotes\u2026" value="${esc(vSearch)}" style="flex:1 1 230px;min-width:180px;padding:7px 10px;font-size:13.5px">
     ${sel("use", opt("","Use: any", vFilt.use) + opt("ceremony","Ceremony", vFilt.use) + opt("reception","Reception", vFilt.use) + opt("both","Ceremony + reception", vFilt.use))}
     ${sel("stay", opt("","Stay: any", vFilt.stay) + opt("stay","Has stay on-site", vFilt.stay) + opt("sleeps","Sleeps everyone", vFilt.stay))}
     ${sel("season", opt("","Season: any", vFilt.season) + Object.entries(SEASON_LABEL).map(([k,l]) => opt(k, l, vFilt.season)).join(""))}
@@ -7655,7 +7894,7 @@ function viewVenues(){
       <span class="small" style="color:var(--faint)">\u2013</span>
       <input data-fnum="pmax" type="number" min="0" step="500" inputmode="numeric" placeholder="\u20ac max" value="${esc(vFilt.pmax)}" style="width:92px;padding:7px 8px;font-size:13px">
     </span>
-    ${Object.values(vFilt).some(Boolean) ? `<button class="btn sm ghost" data-act="clear-filters">Reset filters</button>` : ""}
+    ${(Object.values(vFilt).some(Boolean) || vSearch.trim()) ? `<button class="btn sm ghost" data-act="clear-filters">Reset filters</button>` : ""}
   </div>`;
 
   let list = (venueFilter === "all" ? [...pool] : pool.filter(v => phaseOf(v) === venueFilter)).filter(venueMatches);
@@ -7715,6 +7954,8 @@ function wireVenues(root){
   $$("[data-vf]", root).forEach(c => c.addEventListener("click", () => { venueFilter = c.dataset.vf; scheduleRender(); }));
   $$("[data-fsel]", root).forEach(s => s.addEventListener("change", () => { vFilt[s.dataset.fsel] = s.value; scheduleRender(); }));
   $$("[data-fnum]", root).forEach(i => i.addEventListener("change", () => { vFilt[i.dataset.fnum] = i.value.trim(); scheduleRender(); }));
+  const vsi = $("[data-vsearch]", root);
+  if (vsi) vsi.addEventListener("input", () => { vSearch = vsi.value; scheduleRender(); });
   const eg = $('[data-act="empty-graveyard"]', root);
   if (eg) eg.addEventListener("click", async () => {
     const dead = state.venues.filter(v => v.deleted);
@@ -7731,7 +7972,7 @@ function wireVenues(root){
     scheduleRender();
   });
   const cf = $('[data-act="clear-filters"]', root);
-  if (cf) cf.addEventListener("click", () => { Object.keys(vFilt).forEach(k => vFilt[k] = ""); scheduleRender(); });
+  if (cf) cf.addEventListener("click", () => { vSearch = ""; Object.keys(vFilt).forEach(k => vFilt[k] = ""); scheduleRender(); });
   $$("[data-open-venue]", root).forEach(r => r.addEventListener("click", e => {
     if (e.target.closest("[data-restore-venue],[data-bury-forever]")) return;
     go("#/venues/" + r.dataset.openVenue); }));
@@ -7999,6 +8240,7 @@ function viewVenue(id){
     <div class="card" style="background:var(--inset);box-shadow:none">
       <div class="row between">
         <div><b class="serif" style="font-size:17px">${esc(q.label || "Quote")}</b>
+          <span class="stamp ${QUOTE_CONF[quoteConf(q)].cls}" style="margin-left:8px">${QUOTE_CONF[quoteConf(q)].txt}</span>
           ${q.validUntil ? `<span class="note" style="margin-left:8px">valid until ${fmtDate(q.validUntil)}</span>` : ""}</div>
         ${isHelper() ? "" : `<div class="row" style="gap:6px">
           <button class="btn sm ghost" data-edit-quote="${q.id}">Edit</button>
@@ -8014,6 +8256,7 @@ function viewVenue(id){
         ${inclusionRows(q).map(r => `<div class="kv"><span class="${r.ok?"tick":"cross"}">${r.ok?"\\u2713":"—"}</span><span class="${r.ok?"":"dim"}">${r.txt}</span></div>`).join("")}
       </div>
       ${att ? `<button class="btn sm" style="margin-top:11px" data-open-pdf="${att.id}">${I.clip} ${esc(att.name)}</button>` : ""}
+      ${q.link ? `<button class="btn sm" style="margin-top:11px;margin-left:8px" data-open-qlink="${q.id}">${I.clip} Quote link</button>` : ""}
       ${q.notes ? `<div class="note" style="margin-top:10px">${esc(q.notes)}</div>` : ""}
     </div>`; }).join("");
 
@@ -8027,6 +8270,7 @@ function viewVenue(id){
         ${v.oldScore ? `<span class="stamp">old score ${v.oldScore}/10</span>` : ""}
         ${useBadge(v) ? `<span class="stamp">${useBadge(v)}</span>` : ""}
         ${hasStay(v) ? `<span class="stamp olive">Stay included</span>` : ""}
+        ${venueVerified(v) ? `<span class="stamp olive">\u2713 price verified</span>` : ""}
       </div>
       <div class="sub">${esc(v.region||"")}${v.country?" · "+esc(v.country):""}${v.capacity?` · up to ${v.capacity} guests`:""}${v.style?` · ${esc(v.style)}`:""}
       ${v.url ? ` · <a href="${esc(v.url)}" target="_blank" rel="noopener">website ↗</a>` : ""}</div></div>
@@ -8060,6 +8304,15 @@ function viewVenue(id){
       <p class="note">Tap a date to cycle unknown → free → booked, as venues confirm.</p>
       <div class="row" style="gap:8px">${availChips}</div>
     </div>
+  </div>
+
+  <div class="sect">Links & documents</div>
+  <div class="card">
+    <div class="row" style="gap:8px;flex-wrap:wrap">
+      ${(v.links||[]).map(l => `<button class="chip click" data-open-link="${l.id}" title="${esc(l.url)}">${I.clip} ${esc(l.label || l.url.replace(/^https?:\/\//, "").slice(0, 42))}</button>`).join("")}
+      ${isHelper() ? ((v.links||[]).length ? "" : `<span class="note">Nothing linked yet.</span>`) : `<button class="btn sm ghost" data-act="add-link">${I.plus} Add a link</button>`}
+    </div>
+    ${(v.links||[]).length || isHelper() ? "" : `<p class="note" style="margin:8px 0 0">Google Drive PDFs preview right inside the app once the file is shared with \u201cAnyone with the link\u201d.</p>`}
   </div>
 
   <div class="sect">Quotes</div>
@@ -8124,6 +8377,35 @@ function wireVenue(id, root){
     if (next === "unknown") delete v.availability[c.dataset.avail]; else v.availability[c.dataset.avail] = next;
     saveDoc("venues", v); }));
   wireRatings(v, root);
+  $$("[data-open-qlink]", root).forEach(b => b.addEventListener("click", () => {
+    const q = (v.quotes||[]).find(x => x.id === b.dataset.openQlink);
+    if (q && q.link) openLinkPreview(q.label || "Quote", q.link);
+  }));
+  $$("[data-open-link]", root).forEach(b => b.addEventListener("click", () => {
+    const l = (v.links||[]).find(x => x.id === b.dataset.openLink);
+    if (!l) return;
+    openLinkPreview(l.label || l.url, l.url, () => {
+      v.links = (v.links||[]).filter(x => x.id !== l.id);
+      saveDoc("venues", v);
+      logActivity(`removed a link from \u201c${v.name}\u201d`);
+    });
+  }));
+  const al = $('[data-act="add-link"]', root);
+  if (al) al.addEventListener("click", () => {
+    openModal("Add a link", `
+      <div class="field"><label>Label</label><input id="l-label" placeholder="Brochure \u00b7 Floor plan \u00b7 Their quote PDF"></div>
+      <div class="field"><label>URL</label><input id="l-url" type="url" placeholder="https://drive.google.com/file/d/\u2026"></div>
+      <p class="note" style="margin:6px 0 0">Drive links preview inside the app when the file is shared with \u201cAnyone with the link\u201d.</p>`,
+      [{label:"Add link", primary:true, onClick(m, close){
+        const url = $("#l-url", m).value.trim();
+        if (!/^https?:\/\//i.test(url)) return toast("Paste a full URL (https://\u2026)");
+        v.links = v.links || [];
+        v.links.push({id:uid(), label:$("#l-label", m).value.trim(), url});
+        saveDoc("venues", v);
+        logActivity(`added a link to \u201c${v.name}\u201d`);
+        close();
+      }}]);
+  });
   $$("[data-edit-quote]", root).forEach(b => b.addEventListener("click", () =>
     openQuoteModal(v.id, (v.quotes||[]).find(q => q.id === b.dataset.editQuote))));
   $$("[data-del-quote]", root).forEach(b => b.addEventListener("click", async () => {
@@ -8484,7 +8766,7 @@ function openVenueModal(v){
 function openQuoteModal(venueId, q){
   const v = state.venues.find(x => x.id === venueId); if (!v) return;
   const isNew = !q;
-  q = q ? JSON.parse(JSON.stringify(q)) : {id:uid(), label:"", total:"", currency:"EUR",
+  q = q ? JSON.parse(JSON.stringify(q)) : {id:uid(), label:"", total:"", currency:"EUR", conf:"written",
     inclusions:{ceremony:true, reception:true, catering:"perHead", cateringPerHead:"", openBar:false, barNote:"",
       accommodation:{included:false, rooms:"", nights:"", note:""}, exclusiveUse:false, planner:false},
     validUntil:"", notes:""};
@@ -8494,6 +8776,11 @@ function openQuoteModal(venueId, q){
       <div class="field"><label>Label</label><input id="q-label" value="${esc(q.label)}" placeholder="September 2027 · 90 guests"></div>
       <div class="field"><label>Valid until</label><input id="q-valid" type="date" value="${esc(q.validUntil||"")}"></div>
     </div>
+    <div class="field"><label>How solid is this price?</label><select id="q-conf">
+      <option value="estimate" ${(q.conf||"written")==="estimate"?"selected":""}>An estimate \u2014 ours or theirs</option>
+      <option value="written" ${(q.conf||"written")==="written"?"selected":""}>A real quote, in writing</option>
+      <option value="verified" ${(q.conf||"written")==="verified"?"selected":""}>\u2713 Verified \u2014 confirmed by the venue</option>
+    </select></div>
     <div class="fields2">
       <div class="field"><label>Venue price (total)</label><input id="q-total" type="number" min="0" step="50" value="${esc(q.total)}"></div>
       <div class="field"><label>Currency</label><select id="q-cur">${["EUR","GBP","USD","CHF"].map(c => `<option ${q.currency===c?"selected":""}>${c}</option>`).join("")}</select></div>
@@ -8523,12 +8810,14 @@ function openQuoteModal(venueId, q){
     <div class="field" style="margin-top:8px"><label>Attach a file (upload PDFs on the venue page first)</label>
       <select id="q-file"><option value="">— none —</option>
       ${venueFilesOf(venueId).filter(f => f.kind !== "image").map(f => `<option value="${f.id}" ${q.fileId===f.id?"selected":""}>${esc(f.name)}</option>`).join("")}</select></div>
+    <div class="field"><label>Link \u2014 Drive PDF, email, website\u2026</label><input id="q-link" type="url" value="${esc(q.link||"")}" placeholder="https://drive.google.com/file/d/\u2026"></div>
     <div class="field"><label>Notes</label><textarea id="q-notes" rows="2" placeholder="Minimum guests, curfew, extras…">${esc(q.notes||"")}</textarea></div>
     <div class="card" style="background:var(--inset);padding:12px 14px"><span class="dim small">All-in at ${+state.meta.expectedGuests||90} guests: </span><b class="mono" id="q-live">—</b></div>`,
     [{label: isNew ? "Add quote" : "Save quote", primary:true, onClick(m, close){
       const total = +$("#q-total", m).value; if (!total) return toast("Enter the venue price");
       Object.assign(q, { label:$("#q-label",m).value.trim(), validUntil:$("#q-valid",m).value || "",
-        total, currency:$("#q-cur",m).value, notes:$("#q-notes",m).value.trim(), fileId:$("#q-file",m).value || "" });
+        total, currency:$("#q-cur",m).value, notes:$("#q-notes",m).value.trim(), fileId:$("#q-file",m).value || "",
+        conf:$("#q-conf",m).value, link:$("#q-link",m).value.trim() });
       q.inclusions = {
         ceremony:$("#q-cer",m).checked, reception:$("#q-rec",m).checked,
         catering:$("#q-cat",m).value, cateringPerHead:+$("#q-ph",m).value || 0,

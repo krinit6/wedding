@@ -6626,7 +6626,8 @@ function demoAdapter(){
     async loadChunks(fileId, n){ let out = "";
       for (let i = 0; i < n; i++){ const c = state.filechunks.find(x => x.id === fileId + "_" + i); out += c ? c.data : ""; }
       return out; },
-    addActivity(e){ state.activity.unshift(e); state.activity = state.activity.slice(0, 20); scheduleRender(); },
+    addActivity(e){ state.activityAll = (state.activityAll || []).concat(e); state.activity.unshift(e); state.activity = state.activity.slice(0, 20); scheduleRender(); },
+    async fetchActivity(){ return [...(state.activityAll || state.activity)].sort((a, b) => a.ts - b.ts); },
     async purgeOwner(oid){
       state.files.filter(f => (f.ownerId||f.venueId) === oid).forEach(f => {
         for (let i = 0; i < (f.chunks||0); i++) this.remove("filechunks", f.id + "_" + i);
@@ -6729,6 +6730,10 @@ async function firebaseAdapter(cfg){
     remove(col, id){ fsM.deleteDoc(fsM.doc(db, col, id)).catch(e => toast("Delete failed: " + e.code)); },
     setMeta(patch){ fsM.setDoc(fsM.doc(db, "meta", "main"), patch, {merge:true}).catch(e => toast("Save failed: " + e.code)); },
     addActivity(e){ const {id, ...data} = e; fsM.setDoc(fsM.doc(db, "activity", id), data).catch(()=>{}); },
+    async fetchActivity(){
+      const qs = await fsM.getDocs(fsM.query(fsM.collection(db, "activity"), fsM.orderBy("ts", "asc")));
+      return qs.docs.map(d => ({id: d.id, ...d.data()}));
+    },
     setPublic(patch){ fsM.setDoc(fsM.doc(db, "public", "info"), patch, {merge:true}).catch(e => toast("Save failed: " + e.code)); },
     async purgeOwner(oid){
       const grab = async (coll, field) => { try {
@@ -9061,13 +9066,19 @@ function viewSettings(){
         const norm = s => (s || "").trim().toLowerCase();
         const gid = new Set(state.guests.map(g => g.id)), gname = new Set(state.guests.map(g => norm(g.name)));
         const vid = new Set(state.venues.filter(v => !v.sample).map(v => v.id));
+        const vname = new Set(state.venues.filter(v => !v.sample).map(v => norm(v.name)));
         const mg = SEED.guests.filter(g => !gid.has(g.id) && !gname.has(norm(g.name))).length;
-        const mv = SEED.venues.filter(v => !vid.has(v.id)).length;
+        const mv = SEED.venues.filter(v => !vid.has(v.id) && !vname.has(norm(v.name))).length;
         return `<p class="note" style="margin:0 0 12px">On the master list but not in your database right now: <b>${mg}</b> guest ${mg === 1 ? "party" : "parties"} · <b>${mv}</b> venue${mv === 1 ? "" : "s"}.</p>
       <div class="row">
         <button class="btn ${mg ? "primary" : ""}" data-act="import-guests" ${mg ? "" : "disabled"}>Add the missing guests</button>
         <button class="btn" data-act="import-venues" ${mv ? "" : "disabled"}>Add the missing venues</button>
       </div>`; })()}
+    </div>
+    <div class="card">
+      <h3>Undo an accidental re-add</h3>
+      <p class="note" style="margin:10px 0 12px">If an import ever brings back venues you\u2019d deleted in the past, this replays your activity history and re-buries every venue whose last recorded event was a deletion. They go to the graveyard \u2014 nothing is erased \u2014 so you can review them and restore any keeper.</p>
+      <button class="btn" data-act="rebury">Re-bury my deleted venues</button>
     </div>`}
     <div class="card">
       <h3>Connection</h3>
@@ -9112,14 +9123,45 @@ function wireSettings(root){
   });
   const impV = $('[data-act="import-venues"]', root);
   if (impV) impV.addEventListener("click", async () => {
-    const have = new Set(state.venues.filter(v => !v.sample).map(v => v.id));
-    const missing = SEED.venues.filter(v => !have.has(v.id));
+    const norm = s => (s || "").trim().toLowerCase();
+    const haveId = new Set(state.venues.filter(v => !v.sample).map(v => v.id));
+    const haveName = new Set(state.venues.filter(v => !v.sample).map(v => norm(v.name)));
+    const missing = SEED.venues.filter(v => !haveId.has(v.id) && !haveName.has(norm(v.name)));
     if (!missing.length) return toast("Every venue on the master list is already in");
-    if (!await confirmDlg(`Add <b>${missing.length} venue${missing.length === 1 ? "" : "s"}</b> from the master list? Note: this can bring back venues you once deleted <i>forever</i>. Living and graveyarded venues are left untouched; untouched sample venues are cleared.`)) return;
+    const preview = missing.slice(0, 6).map(v => esc(v.name)).join(", ") + (missing.length > 6 ? ` +${missing.length - 6} more` : "");
+    if (!await confirmDlg(`Add <b>${missing.length} venue${missing.length === 1 ? "" : "s"}</b> from the master list?<br><span class="small" style="color:var(--faint)">${preview}</span><br>Note: this can bring back venues you once deleted <i>forever</i>. Living and graveyarded venues are left untouched; untouched sample venues are cleared.`)) return;
     state.venues.filter(v => v.sample).forEach(v => dropDoc("venues", v.id));
     missing.forEach(v => saveDoc("venues", v));
     logActivity(`added ${missing.length} venue${missing.length === 1 ? "" : "s"} from the master list`);
     toast(`Added ${missing.length} venue${missing.length === 1 ? "" : "s"}`);
+  });
+  const rb = $('[data-act="rebury"]', root);
+  if (rb) rb.addEventListener("click", async () => {
+    rb.disabled = true;
+    let evts = [];
+    try { evts = await (adapter.fetchActivity ? adapter.fetchActivity() : Promise.resolve([])); }
+    catch(e){ rb.disabled = false; return toast("Could not read the activity history: " + (e.code || e.message)); }
+    rb.disabled = false;
+    const norm = s => (s || "").trim().toLowerCase();
+    const PATS = [
+      [/^deleted venue \u201c(.+)\u201d$/, true],
+      [/^moved \u201c(.+)\u201d to the graveyard$/, true],
+      [/^deleted \u201c(.+)\u201d for good$/, true],
+      [/^brought \u201c(.+)\u201d back from the graveyard$/, false],
+      [/^added venue \u201c(.+)\u201d$/, false],
+      [/^updated \u201c(.+)\u201d$/, false]
+    ];
+    const last = new Map();
+    evts.sort((a, b) => (a.ts||0) - (b.ts||0)).forEach(e => {
+      for (const [rx, dead] of PATS){ const m = rx.exec(e.text || ""); if (m){ last.set(norm(m[1]), {dead, ts: e.ts}); break; } }
+    });
+    const targets = state.venues.filter(v => !v.deleted && !v.sample && last.get(norm(v.name)) && last.get(norm(v.name)).dead);
+    if (!targets.length) return toast("Nothing to re-bury \u2014 no living venue has a deletion as its last recorded event");
+    const names = targets.map(v => esc(v.name)).join(", ");
+    if (!await confirmDlg(`Move <b>${targets.length} venue${targets.length === 1 ? "" : "s"}</b> back to the graveyard?<br><div class="small" style="color:var(--faint);max-height:130px;overflow:auto;margin-top:6px">${names}</div>`)) return;
+    targets.forEach(v => saveDoc("venues", {...v, deleted: true, deletedAt: (last.get(norm(v.name)).ts || Date.now())}));
+    logActivity(`re-buried ${targets.length} venue${targets.length === 1 ? "" : "s"} from the activity history`);
+    toast(`${targets.length} venue${targets.length === 1 ? "" : "s"} laid back to rest \u2014 review them under the Graveyard chip`);
   });
   const ex = $('[data-act="export"]', root);
   if (ex) ex.addEventListener("click", () => {

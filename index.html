@@ -200,13 +200,13 @@ table.cmp tr:last-child td{border-bottom:0}
 /* ---------- vision board ---------- */
 .masonry{columns:3 220px;column-gap:12px}
 @media (max-width:640px){.masonry{columns:2 150px;column-gap:10px}}
-.pin{break-inside:avoid;margin:0 0 12px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:0 1px 2px rgba(var(--shadow),.12)}
+.pin{display:inline-block;width:100%;vertical-align:top;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;margin:0 0 12px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:0 1px 2px rgba(var(--shadow),.12)}
 .pin.win{border-left:3px solid var(--ever)}
 .pin.spr{border-left:3px solid var(--blush)}
-.pin img{width:100%;display:block;cursor:pointer}
+.pin img{width:100%;height:auto;display:block;cursor:pointer}
 .pin .body{padding:11px 13px}
-.pin .body h4{margin:0 0 3px;font-family:var(--display);font-weight:400;font-size:16px;color:var(--head)}
-.pin .body p{margin:0;font-size:13px;color:var(--sub)}
+.pin .body h4{margin:0 0 3px;font-family:var(--display);font-weight:400;font-size:16px;color:var(--head);overflow-wrap:break-word}
+.pin .body p{margin:0;font-size:13px;color:var(--sub);overflow-wrap:break-word;white-space:pre-wrap}
 .pin .tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-top:8px}
 .pin .tag.win{background:var(--ever-soft);color:var(--ever)}
 .pin .tag.spr{background:var(--blush);color:#5e1f2e}
@@ -7245,6 +7245,7 @@ function viewVenues(){
     return `
   <div class="pagehead">
     <div><h1>Venue graveyard</h1><div class="sub">Deleted venues rest here with their quotes, photos and notes intact. Restore one any time — or delete it forever.</div></div>
+    ${buried.length ? `<button class="btn danger" data-act="empty-graveyard">Empty the graveyard</button>` : ""}
   </div>
   <div class="row" style="margin:14px 0 14px">${chips}</div>
   ${buried.length ? `<div class="stack">${rows}</div>` : `<div class="empty"><div class="serif">The graveyard is empty</div>Venues you delete will rest here, restorable.</div>`}`;
@@ -7330,6 +7331,21 @@ function wireVenues(root){
   $$("[data-vf]", root).forEach(c => c.addEventListener("click", () => { venueFilter = c.dataset.vf; scheduleRender(); }));
   $$("[data-fsel]", root).forEach(s => s.addEventListener("change", () => { vFilt[s.dataset.fsel] = s.value; scheduleRender(); }));
   $$("[data-fnum]", root).forEach(i => i.addEventListener("change", () => { vFilt[i.dataset.fnum] = i.value.trim(); scheduleRender(); }));
+  const eg = $('[data-act="empty-graveyard"]', root);
+  if (eg) eg.addEventListener("click", async () => {
+    const dead = state.venues.filter(v => v.deleted);
+    if (!dead.length) return;
+    if (!await confirmDlg(`Erase <b>all ${dead.length} venue${dead.length === 1 ? "" : "s"}</b> in the graveyard forever — photos, quotes, notes and comments included? There is no undo.`)) return;
+    toast("Emptying the graveyard\u2026");
+    for (const v of dead){
+      try { if (adapter.purgeOwner) await adapter.purgeOwner(v.id); } catch(e){}
+      dropDoc("venues", v.id);
+    }
+    logActivity(`emptied the venue graveyard (${dead.length} venue${dead.length === 1 ? "" : "s"} erased)`);
+    venueFilter = "all";
+    toast("The graveyard is empty");
+    scheduleRender();
+  });
   const cf = $('[data-act="clear-filters"]', root);
   if (cf) cf.addEventListener("click", () => { Object.keys(vFilt).forEach(k => vFilt[k] = ""); scheduleRender(); });
   $$("[data-open-venue]", root).forEach(r => r.addEventListener("click", e => {
@@ -9039,9 +9055,19 @@ function viewSettings(){
       <button class="btn" data-act="export">Export a backup</button>
     </div>`}
     ${isHelper() ? "" : `<div class="card">
-      <h3>Your imported venues & guests</h3>
-      <p class="note" style="margin:10px 0 12px">This build carries your ${SEED.venues.length} venues and ${SEED.guests.length} guest parties (${SEED.guests.reduce((n,g) => n + (+g.count||1), 0)} people) from the old planner and Notion. A fresh database gets them automatically; pressing the button adds whatever’s missing from yours — it never overwrites or duplicates anything already there.</p>
-      <button class="btn" data-act="import-real">Write them to the database</button>
+      <h3>Your master list — venues & guests</h3>
+      <p class="note" style="margin:10px 0 12px">This build carries your ${SEED.venues.length} venues and ${SEED.guests.length} guest parties (${SEED.guests.reduce((n,g) => n + (+g.count||1), 0)} people) from the old planner and Notion. Adding is strictly additive — nothing already in your database, the graveyard included, is overwritten, un-deleted or duplicated.</p>
+      ${(() => {
+        const norm = s => (s || "").trim().toLowerCase();
+        const gid = new Set(state.guests.map(g => g.id)), gname = new Set(state.guests.map(g => norm(g.name)));
+        const vid = new Set(state.venues.filter(v => !v.sample).map(v => v.id));
+        const mg = SEED.guests.filter(g => !gid.has(g.id) && !gname.has(norm(g.name))).length;
+        const mv = SEED.venues.filter(v => !vid.has(v.id)).length;
+        return `<p class="note" style="margin:0 0 12px">On the master list but not in your database right now: <b>${mg}</b> guest ${mg === 1 ? "party" : "parties"} · <b>${mv}</b> venue${mv === 1 ? "" : "s"}.</p>
+      <div class="row">
+        <button class="btn ${mg ? "primary" : ""}" data-act="import-guests" ${mg ? "" : "disabled"}>Add the missing guests</button>
+        <button class="btn" data-act="import-venues" ${mv ? "" : "disabled"}>Add the missing venues</button>
+      </div>`; })()}
     </div>`}
     <div class="card">
       <h3>Connection</h3>
@@ -9068,24 +9094,32 @@ function wireSettings(root){
   if (un) un.addEventListener("click", async () => {
     if (await confirmDlg("Unlock the date? “Months before” deadlines go back to being estimates.")){
       saveMeta({lockedDateId:null}); logActivity("unlocked the date"); toast("Date unlocked"); }});
-  const im = $('[data-act="import-real"]', root);
-  if (im) im.addEventListener("click", async () => {
-    if (!await confirmDlg(`Write your <b>${SEED.venues.length} venues</b> and <b>${SEED.guests.length} guest parties</b> into the database? This only <b>adds what\u2019s missing</b> \u2014 nothing you\u2019ve added or edited is touched. It also removes the untouched sample venues and sets expected guests to 40 with a \u20ac13,000 cap.`)) return;
+  const impG = $('[data-act="import-guests"]', root);
+  if (impG) impG.addEventListener("click", async () => {
     const norm = s => (s || "").trim().toLowerCase();
     const oldSampleNames = {g1:"Eleni P.", g2:"Nikos K.", g3:"Marina T.", g4:"Petros D.", g5:"Sofia L.", g6:"Giorgos M."};
     const dropG = state.guests.filter(g => oldSampleNames[g.id] && g.name === oldSampleNames[g.id]);
-    state.venues.filter(v => v.sample).forEach(v => dropDoc("venues", v.id));
-    dropG.forEach(g => dropDoc("guests", g.id));
     const dropped = new Set(dropG.map(g => g.id));
-    const haveV = new Set(state.venues.filter(v => !v.sample).map(v => v.id));
-    const haveGId = new Set(), haveGName = new Set();
-    state.guests.forEach(g => { if (!dropped.has(g.id)){ haveGId.add(g.id); haveGName.add(norm(g.name)); } });
-    let nv = 0, ng = 0;
-    SEED.venues.forEach(v => { if (!haveV.has(v.id)){ saveDoc("venues", v); nv++; } });
-    SEED.guests.forEach(g => { if (!haveGId.has(g.id) && !haveGName.has(norm(g.name))){ saveDoc("guests", g); ng++; } });
-    saveMeta({expectedGuests: 40, budgetCap: 13000});
-    if (ng || nv) logActivity(`imported the master list \u2014 added ${ng} guest ${ng === 1 ? "party" : "parties"} and ${nv} venue${nv === 1 ? "" : "s"}`);
-    toast(ng || nv ? `Added ${ng} guest ${ng === 1 ? "party" : "parties"} and ${nv} venue${nv === 1 ? "" : "s"}` : "Everything was already there \u2014 nothing to add");
+    const haveId = new Set(), haveName = new Set();
+    state.guests.forEach(g => { if (!dropped.has(g.id)){ haveId.add(g.id); haveName.add(norm(g.name)); } });
+    const missing = SEED.guests.filter(g => !haveId.has(g.id) && !haveName.has(norm(g.name)));
+    if (!missing.length) return toast("Every guest on the master list is already in");
+    if (!await confirmDlg(`Add <b>${missing.length} guest ${missing.length === 1 ? "party" : "parties"}</b> from the master list? Everyone already in the database stays exactly as they are.`)) return;
+    dropG.forEach(g => dropDoc("guests", g.id));
+    missing.forEach(g => saveDoc("guests", g));
+    logActivity(`added ${missing.length} guest ${missing.length === 1 ? "party" : "parties"} from the master list`);
+    toast(`Added ${missing.length} guest ${missing.length === 1 ? "party" : "parties"}`);
+  });
+  const impV = $('[data-act="import-venues"]', root);
+  if (impV) impV.addEventListener("click", async () => {
+    const have = new Set(state.venues.filter(v => !v.sample).map(v => v.id));
+    const missing = SEED.venues.filter(v => !have.has(v.id));
+    if (!missing.length) return toast("Every venue on the master list is already in");
+    if (!await confirmDlg(`Add <b>${missing.length} venue${missing.length === 1 ? "" : "s"}</b> from the master list? Note: this can bring back venues you once deleted <i>forever</i>. Living and graveyarded venues are left untouched; untouched sample venues are cleared.`)) return;
+    state.venues.filter(v => v.sample).forEach(v => dropDoc("venues", v.id));
+    missing.forEach(v => saveDoc("venues", v));
+    logActivity(`added ${missing.length} venue${missing.length === 1 ? "" : "s"} from the master list`);
+    toast(`Added ${missing.length} venue${missing.length === 1 ? "" : "s"}`);
   });
   const ex = $('[data-act="export"]', root);
   if (ex) ex.addEventListener("click", () => {

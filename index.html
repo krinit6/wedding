@@ -481,7 +481,7 @@ const VENDOR_CATS = [
   {id:"flowers", label:"Florist",        icon:"bloom"},
   {id:"catering",label:"Caterer",        icon:"cake"},
   {id:"cake",    label:"Cake",           icon:"cake"},
-  {id:"officiant",label:"Priest / officiant", icon:"ring"},
+  {id:"officiant",label:"Officiant / celebrant", icon:"ring"},
   {id:"beauty",  label:"Hair & make-up", icon:"bloom"},
   {id:"attire",  label:"Attire",         icon:"ring"},
   {id:"stationery",label:"Stationery",   icon:"clip"},
@@ -517,16 +517,16 @@ const SEED = {
   },
   dates: [
     {id:"d1",  iso:"2027-04-23", flags:["The only Friday on your list","Spring — mild weather, off-peak prices"], votes:{}},
-    {id:"d2",  iso:"2027-06-21", flags:["Summer solstice — the longest daylight of the year"], votes:{}},
+    {id:"d2",  iso:"2027-06-21", flags:[], votes:{}},
     {id:"d3",  iso:"2027-06-27", flags:[], votes:{}},
     {id:"d4",  iso:"2027-09-09", flags:[], votes:{}},
     {id:"d5",  iso:"2027-09-18", flags:["The only Saturday you\u2019re considering"], votes:{}},
-    {id:"d6",  iso:"2027-09-27", flags:["You listed this one twice — a favorite?"], votes:{}},
+    {id:"d6",  iso:"2027-09-27", flags:[], votes:{}},
     {id:"d7",  iso:"2027-10-17", flags:[], votes:{}},
     {id:"d8",  iso:"2027-10-27", flags:[], votes:{}},
-    {id:"d9",  iso:"2027-11-23", flags:["Inside the Nativity fast (15 Nov – 24 Dec): Orthodox church weddings are generally not held"], votes:{}},
-    {id:"d10", iso:"2027-12-23", flags:["Christmas week — peak travel prices for guests","Inside the Nativity fast"], votes:{}},
-    {id:"d11", iso:"2027-12-27", flags:["Between Christmas & New Year — traditionally no Orthodox weddings; peak travel"], votes:{}}
+    {id:"d9",  iso:"2027-11-23", flags:[], votes:{}},
+    {id:"d10", iso:"2027-12-23", flags:["Christmas week — peak travel prices for guests"], votes:{}},
+    {id:"d11", iso:"2027-12-27", flags:["Between Christmas & New Year — peak travel prices for guests"], votes:{}}
   ],
   venues: [
  {
@@ -7082,6 +7082,31 @@ function seasonStamp(iso){
   const cls = s === "Winter" ? "pine" : s === "Summer" ? "olive" : s === "Autumn" ? "candle" : "";
   return `<span class="stamp ${cls}">${s}</span>`;
 }
+const DATE_LORE = {
+  "2027-04-23": ["Your example: 23 + 4 = 27; 23 is your day"],
+  "2027-06-21": ["Late June \u2014 and it lands right on the summer solstice (June 20\u201321), the longest, brightest day of the year. Hard to beat symbolically for a sun wedding"],
+  "2027-06-27": ["Late June \u2014 warm & sunny, sea warming, priced just before the July peak. The \u201chave your 27 and afford it too\u201d pick"],
+  "2027-09-09": ["Purest 9 (root of 27), ties to your \u201909"],
+  "2027-09-18": ["18 + 9 = 27, and 18 \u2192 9, next to a 9. Very \u201c9-heavy\u201d"],
+  "2027-09-27": ["Double-27 \u2014 look again, 27 \u2192 9"],
+  "2027-10-17": ["17 + 10 = 27"],
+  "2027-10-27": ["Double-27"],
+  "2027-11-23": ["Uses your number 23, and the whole date reduces to 9 (your together-year root). Quietly perfect"],
+  "2027-12-23": ["Your actual anniversary \u2014 exactly 18 years together, and 18 \u2192 9"],
+  "2027-12-27": ["Double-27", "Between Christmas & New Year \u2014 peak travel prices for guests"]
+};
+const LORE_SUPERSEDED = new Set([
+  "You listed this one twice \u2014 a favorite?",
+  "Summer solstice \u2014 the longest daylight of the year",
+  "Inside the Nativity fast (15 Nov \u2013 24 Dec): Orthodox church weddings are generally not held",
+  "Inside the Nativity fast",
+  "Between Christmas & New Year \u2014 traditionally no Orthodox weddings; peak travel"
+]);
+function dateFlags(d){
+  const own = (d.flags || []).filter(f => !LORE_SUPERSEDED.has(f));
+  const lore = (DATE_LORE[d.iso] || []).filter(l => !own.includes(l));
+  return own.concat(lore);
+}
 function viewDates(){
   const ld = lockedDate(), lead = leadingDate();
   const meId = me().id;
@@ -7107,7 +7132,7 @@ function viewDates(){
           ${isLocked ? `<span class="stamp solid">Locked in</span>` : isLead ? `<span class="stamp candle">Leading</span>` : ""}
         </div>
       </div>
-      ${(d.flags||[]).map(f => `<div class="flagline"><span class="dot" style="background:var(--accent)"></span><span>${esc(f)}</span></div>`).join("")}
+      ${dateFlags(d).map(f => `<div class="flagline"><span class="dot" style="background:var(--accent)"></span><span>${esc(f)}</span></div>`).join("")}
       ${weekdayHint ? `<div class="flagline"><span class="dot" style="background:var(--faint)"></span><span>${weekdayHint}</span></div>` : ""}
       ${freeCount ? `<div class="flagline"><span class="dot" style="background:var(--ever)"></span><span><b style="color:var(--ever)">${plural(freeCount,"venue")} available:</b> ${esc(freeVs.slice(0,3).map(v=>v.name).join(", "))}${freeCount > 3 ? ` +${freeCount-3} more` : ""}</span></div>` : ""}
       <div class="voterow" title="Votes so far">
@@ -7198,8 +7223,11 @@ function perGuestAllIn(q){
 const vFilt = {use:"", stay:"", season:"", country:"", vibe:"", price:"", pmin:"", pmax:""};
 const PHASE_RANK = {booked:0, shortlist:1, research:2, cleanup:3};
 const anyQuote = (v, test) => (v.quotes||[]).some(q => test(q.inclusions || {}));
-const usesCeremony  = v => !!v.useCeremony  || anyQuote(v, i => i.ceremony);
-const usesReception = v => !!v.useReception || anyQuote(v, i => i.reception);
+const venueText = v => [v.pitch, v.style, v.notes, v.stay, v.priceNote, v.region].filter(Boolean).join(" ").toLowerCase();
+const usesCeremony  = v => v.useCeremony  !== undefined ? !!v.useCeremony  : (anyQuote(v, i => i.ceremony)  || /ceremon/.test(venueText(v)));
+const usesReception = v => v.useReception !== undefined ? !!v.useReception : (anyQuote(v, i => i.reception) || /reception|dinner|dining|banquet|lunch|feast|long-table|supper/.test(venueText(v)));
+const useBadge = v => { const c = usesCeremony(v), r = usesReception(v);
+  return c && r ? "Ceremony + reception" : c ? "Ceremony" : r ? "Reception" : ""; };
 const hasStay = v => !!v.sleeps || !!(v.stay||"").trim() || anyQuote(v, i => (i.accommodation||{}).included);
 function venueMatches(v){
   if (vFilt.use === "ceremony" && !usesCeremony(v)) return false;
@@ -7289,9 +7317,8 @@ function viewVenues(){
     const avail = fd ? (v.availability||{})[fd.iso] : null;
     const rt = ratingOf(v);
     const ph = phaseOf(v);
-    const useStamps = [usesCeremony(v) ? `<span class="stamp">Ceremony</span>` : "",
-                       usesReception(v) ? `<span class="stamp">Reception</span>` : "",
-                       hasStay(v) ? `<span class="stamp olive">Stay</span>` : ""].join("");
+    const useStamps = [useBadge(v) ? `<span class="stamp">${useBadge(v)}</span>` : "",
+                       hasStay(v) ? `<span class="stamp olive">Stay included</span>` : ""].join("");
     return `<div class="vrow" data-open-venue="${v.id}">
       ${v.coverThumb ? `<img class="thumb" src="${v.coverThumb}" alt="">`
                      : `<span class="thumb ph">${I.camera}</span>`}
@@ -7646,6 +7673,8 @@ function viewVenue(id){
         ${starsHTML(rt.avg, {small:true})}
         <span class="mono muted small">${rt.count ? rt.avg.toFixed(1) + " · " + plural(rt.count,"vote") : "no ratings yet"}</span>
         ${v.oldScore ? `<span class="stamp">old score ${v.oldScore}/10</span>` : ""}
+        ${useBadge(v) ? `<span class="stamp">${useBadge(v)}</span>` : ""}
+        ${hasStay(v) ? `<span class="stamp olive">Stay included</span>` : ""}
       </div>
       <div class="sub">${esc(v.region||"")}${v.country?" · "+esc(v.country):""}${v.capacity?` · up to ${v.capacity} guests`:""}${v.style?` · ${esc(v.style)}`:""}
       ${v.url ? ` · <a href="${esc(v.url)}" target="_blank" rel="noopener">website ↗</a>` : ""}</div></div>
@@ -7825,7 +7854,7 @@ function viewVendors(){
 
   return `
   <div class="pagehead">
-    <div><h1>Vendors</h1><div class="sub">Every supplier in one place — photographer to priest — with quotes, ratings, files and notes, exactly like your venues.</div></div>
+    <div><h1>Vendors</h1><div class="sub">Every supplier in one place — photographer to celebrant — with quotes, ratings, files and notes, exactly like your venues.</div></div>
     <button class="btn primary" data-act="add-vendor">${I.plus} Add vendor</button>
   </div>
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:14px 0 4px">
@@ -8073,8 +8102,8 @@ function openVenueModal(v){
       <div class="field"><label>Capacity (guests)</label><input id="f-cap" type="number" min="0" value="${esc(v.capacity)}"></div>
     </div>
     <div class="sect" style="margin-top:4px">What it\u2019s for</div>
-    <label class="check"><input type="checkbox" id="f-cer" ${v.useCeremony?"checked":""}> Could host the ceremony</label>
-    <label class="check"><input type="checkbox" id="f-rec" ${v.useReception?"checked":""}> Could host the reception</label>
+    <label class="check"><input type="checkbox" id="f-cer" ${usesCeremony(v)?"checked":""}> Could host the ceremony</label>
+    <label class="check"><input type="checkbox" id="f-rec" ${usesReception(v)?"checked":""}> Could host the reception</label>
     <label class="check"><input type="checkbox" id="f-sleeps" ${v.sleeps?"checked":""}> Sleeps everyone on-site</label>
     <div class="fields2" style="margin-top:8px">
       <div class="field"><label>Email</label><input id="f-email" type="email" value="${esc(v.email)}"></div>

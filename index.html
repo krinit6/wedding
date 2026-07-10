@@ -26,45 +26,30 @@
   --bulb-a:#EFC26A; --bulb-b:#E17A8A; --bulb-c:#8FCEA9; --wire:#93aa8c;
   --glow:rgba(233,190,100,.35); --shadow:5,14,10; --btn-ink:#2E2208;
 }
-/* ---- SPRING · bright garden: golden hour, peach, copper, moss, bluebell ---- */
+/* ---- SPRING · meadow & blossom: grasslands, bluebell, sweet cream, lilac, terracotta, grape fizz ---- */
 [data-theme="spring"]{
-  --bg:#FCFBF7; --card:#FFFFFF; --card2:#F4F2EA; --inset:#F7F5EF;
-  --wash1:rgba(240,154,115,.10); --wash2:rgba(127,160,181,.10);
-  --ink:#33322C; --head:#A8501F; --sub:#6F7062; --faint:#9A9A8A;
-  --line:#E9E7DD; --line2:#D6D3C5; --frame:#E3C9A0;
-  --accent:#E2A445; --accent-ink:#96650F; --accent-deep:#C88A33; --accent-soft:#F8ECCB;
-  --berry:#8F4568; --berry-soft:#F4E3EC;
-  --ever:#6E7C36; --ever-soft:#EDF0DB;
-  --leaf:#77803E; --blush:#F09A73; --misty:#7FA0B5;
-  --bulb-a:#ECB25B; --bulb-b:#EE9A70; --bulb-c:#8CA7CE; --wire:#8A7147;
-  --glow:rgba(226,164,69,.4); --shadow:70,60,35; --btn-ink:#3C2A08;
+  --bg:#F8F3E2; --card:#FFFEF8; --card2:#F1EBD5; --inset:#F4EFDC;
+  --wash1:rgba(138,144,72,.14); --wash2:rgba(147,165,205,.14);
+  --ink:#33312A; --head:#6B2540; --sub:#6A6C55; --faint:#98997F;
+  --line:#E8E1C8; --line2:#D5CCA8; --frame:#C9CBA0;
+  --accent:#8A9048; --accent-ink:#454A18; --accent-deep:#6F7536; --accent-soft:#EDEFD2;
+  --berry:#C96A4A; --berry-soft:#F7E2D8;
+  --ever:#5F7A3A; --ever-soft:#E7EED9;
+  --leaf:#7E8A44; --blush:#C9A3D6; --misty:#8FA3CF;
+  --bulb-a:#A9B45E; --bulb-b:#C9A3D6; --bulb-c:#93A5CD; --wire:#83875A;
+  --glow:rgba(158,166,84,.42); --shadow:58,60,38; --btn-ink:#292D08;
 }
-/* ---- SUMMER \u00b7 golden hour & sea: sun-bleached sand, azure, terracotta ---- */
-[data-theme="summer"]{
-  --bg:#FBF9F1; --card:#FFFFFF; --card2:#F3F1E4; --inset:#F6F4E9;
-  --wash1:rgba(233,184,76,.10); --wash2:rgba(111,169,201,.12);
-  --ink:#2E3236; --head:#B4622A; --sub:#63707A; --faint:#93A0A6;
-  --line:#E7E4D4; --line2:#D2CFBD; --frame:#D9C08F;
-  --accent:#E9B84C; --accent-ink:#8F6A12; --accent-deep:#CE9A2F; --accent-soft:#FBEFCB;
-  --berry:#C75B4A; --berry-soft:#F8E4DE;
-  --ever:#3E8E8C; --ever-soft:#E1F0EE;
-  --leaf:#8FA05A; --blush:#F2A97E; --misty:#6FA9C9;
-  --bulb-a:#F2C463; --bulb-b:#F2A97E; --bulb-c:#7FC0D8; --wire:#9A8756;
-  --glow:rgba(233,190,100,.42); --shadow:70,64,40; --btn-ink:#3B2B06;
-}
-/* ---- AUTUMN \u00b7 amber harvest: rust, olive, plum, candle smoke ---- */
-[data-theme="autumn"]{
-  --bg:#F8F2E6; --card:#FFFDF6; --card2:#F1E8D7; --inset:#F4EDDE;
-  --wash1:rgba(201,126,44,.12); --wash2:rgba(143,61,82,.08);
-  --ink:#35302A; --head:#9C4A1E; --sub:#6E6A58; --faint:#9A937E;
-  --line:#E7DECB; --line2:#D5CAB2; --frame:#D8B98B;
-  --accent:#C97E2C; --accent-ink:#7D4C0F; --accent-deep:#A96520; --accent-soft:#F5E4C8;
-  --berry:#8F3D52; --berry-soft:#F1DFE5;
-  --ever:#6B7A3A; --ever-soft:#ECEFDB;
-  --leaf:#97803C; --blush:#E09A6B; --misty:#8E9DB0;
-  --bulb-a:#E0A94E; --bulb-b:#D77A55; --bulb-c:#A8B36A; --wire:#8B6E3E;
-  --glow:rgba(214,150,60,.42); --shadow:66,54,34; --btn-ink:#3A2606;
-}
+/* ---- seasonal atmosphere ---- */
+#season-fx{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+#season-fx .fx{position:absolute;top:-8vh;animation:fxfall var(--fd,14s) linear var(--fdel,0s) infinite}
+#season-fx .fxi{display:block;animation:fxspin calc(var(--fd,14s)/2.3) linear infinite}
+@keyframes fxfall{from{transform:translate3d(0,-8vh,0)}to{transform:translate3d(var(--fx,0px),108vh,0)}}
+@keyframes fxspin{from{rotate:0deg}to{rotate:var(--fr,360deg)}}
+#season-fx[data-t="winter"] .fxi{width:calc(6px*var(--s,1));height:calc(6px*var(--s,1));border-radius:50%;background:#fff;box-shadow:0 0 7px rgba(255,255,255,.85);opacity:.72}
+#season-fx[data-t="spring"] .fxi{width:calc(11px*var(--s,1));height:calc(8.5px*var(--s,1));background:var(--blush);border-radius:62% 38% 55% 45%/58% 46% 54% 42%;opacity:.8}
+#season-fx[data-t="spring"] .fx:nth-child(3n) .fxi{background:var(--misty);opacity:.6}
+#season-fx[data-t="spring"] .fx:nth-child(4n) .fxi{background:var(--berry);opacity:.55}
+@media (prefers-reduced-motion:reduce){#season-fx{display:none}}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;background:var(--bg)}
 body{margin:0;color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
@@ -368,6 +353,7 @@ table.cmp tr:last-child td{border-bottom:0}
 </style>
 </head>
 <body>
+<div id="season-fx" aria-hidden="true"></div>
 <!-- ================================================================
   STEFANA · your wedding command center
   ----------------------------------------------------------------
@@ -443,8 +429,7 @@ const I = {
   compare:'<svg viewBox="0 0 24 24"><path d="M9 4v16M4.5 8.5 9 4l4.5 4.5"/><path d="M15 20V4M19.5 15.5 15 20l-4.5-4.5"/></svg>',
   snow:   '<svg viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/></svg>',
   bloom:  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="5.8" r="2.9"/><circle cx="17.9" cy="10.1" r="2.9"/><circle cx="15.7" cy="17" r="2.9"/><circle cx="8.3" cy="17" r="2.9"/><circle cx="6.1" cy="10.1" r="2.9"/></svg>',
-  sun:    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg>',
-  leaf:   '<svg viewBox="0 0 24 24"><path d="M19.5 4.5C10.5 4.5 5 10 4.5 19.5c9.5-.5 15-6 15-15z"/><path d="M5.5 18.5C9.5 14.5 13 11 17.5 6.5"/></svg>',
+  spark:  '<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9z"/></svg>',
   g:      '<svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 1 6.4-15.4l-2.6 2.6A5.4 5.4 0 1 0 17.4 12H12"/></svg>',
   users:  '<svg viewBox="0 0 24 24"><circle cx="9" cy="8.3" r="3.1"/><path d="M3.6 19c.6-3.1 2.7-4.9 5.4-4.9s4.8 1.8 5.4 4.9"/><circle cx="17" cy="9.4" r="2.5"/><path d="M15.8 13.8c2.3.3 4 1.8 4.6 4.4"/></svg>',
   camera: '<svg viewBox="0 0 24 24"><path d="M4 8.5h3l1.6-2.3h6.8L17 8.5h3a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.5" r="3.4"/></svg>',
@@ -7106,7 +7091,11 @@ function scheduleRender(){ if (renderQueued) return; renderQueued = true;
 
 const me = () => state.members.find(m => m.id === state.currentMemberId) || state.members[0] || {id:"m1", name:"You", role:""};
 const curTheme = () => { const m = state.members.find(x => x.id === state.currentMemberId);
-  return (m && m.theme) || state.uiTheme || "spring"; };
+  const t = (m && m.theme) || state.uiTheme || "spring";
+  return t === "summer" ? "spring" : t === "autumn" ? "winter" : t; };
+const curFx = () => { const m = state.members.find(x => x.id === state.currentMemberId);
+  if (m) return m.fx !== false;
+  return state.uiFx !== false; };
 /* the maid & groom of honor: no budget, no guests, only shortlisted/booked venues */
 const isHelper = () => { const m = me(); return m.id === "m3" || m.id === "m4" || /hono(u)?r/i.test(m.role || ""); };
 const liveVenues = () => state.venues.filter(v => !v.deleted);
@@ -7135,8 +7124,7 @@ function sprigs(){
   const flower = (cx,cy,r) => { const pts = [[0,-1],[.95,-.31],[.59,.81],[-.59,.81],[-.95,-.31]];
     return `<g>${pts.map(([px,py]) => `<circle cx="${(cx+px*r*1.65).toFixed(1)}" cy="${(cy+py*r*1.65).toFixed(1)}" r="${r}" fill="var(--blush)"/>`).join("")}<circle cx="${cx}" cy="${cy}" r="${(r*.72).toFixed(1)}" fill="var(--accent)"/></g>`; };
   const bloom = `<svg class="sprig tl" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 70 C 28 54 40 40 60 16" fill="none" stroke="var(--leaf)" stroke-width="1.7" stroke-linecap="round"/><path d="M30 50 q-11 -1 -14 -12 q11 1 14 12z" fill="var(--leaf)"/><path d="M40 39 q3 -11 14 -13 q-3 11 -14 13z" fill="var(--leaf)"/>${flower(60,16,3.4)}${flower(44,33,2.8)}${flower(22,58,2.3)}</svg>`;
-  const th = curTheme();
-  const s = (th === "winter" || th === "autumn") ? pine : bloom;
+  const s = curTheme() === "winter" ? pine : bloom;
   return s + s.replace('class="sprig tl"', 'class="sprig br"');
 }
 const memberById = id => state.members.find(m => m.id === id);
@@ -7417,8 +7405,16 @@ function subtabsHTML(base, items, cur){
 const navHTML = cur => NAV.filter(n => !(isHelper() && (n.id === "guests" || n.id === "budget"))).map(n =>
   `<button class="navbtn ${cur===n.id?"on":""}" data-nav="${n.id}" aria-label="${n.label}">${n.icon}<span>${n.label}</span></button>`).join("");
 
-const SEASON_THEME = { sp:"spring", su:"summer", au:"autumn", wi:"winter" };
-const THEME_SEASON = { spring:"sp", summer:"su", autumn:"au", winter:"wi" };
+const SEASON_THEME = { sp:"spring", su:"spring", au:"winter", wi:"winter" };
+const THEME_SEASONS = { spring:["sp","su"], winter:["au","wi"] };
+function seasonFX(t){
+  const R = (a, b) => a + Math.random() * (b - a);
+  const drop = (n, dmin, dmax) => Array.from({length: n}, () =>
+    `<span class="fx" style="left:${R(0,100).toFixed(1)}%;--fd:${R(dmin,dmax).toFixed(1)}s;--fdel:${R(-dmax,0).toFixed(1)}s;--fx:${R(-46,46).toFixed(0)}px;--fr:${R(160,540).toFixed(0)}deg"><i class="fxi" style="--s:${R(.55,1.3).toFixed(2)}"></i></span>`).join("");
+  if (t === "winter") return drop(16, 9, 20);
+  if (t === "spring") return drop(13, 10, 22);
+  return "";
+}
 function applyTheme(){
   let t = curTheme();
   try {
@@ -7426,10 +7422,13 @@ function applyTheme(){
     if (r.page === "venues" && r.id){
       const v = state.venues.find(x => x.id === r.id);
       const ss = (v && v.seasons) || [];
-      if (v && ss.length && !ss.includes(THEME_SEASON[t])) t = SEASON_THEME[ss[0]] || t;
+      if (v && ss.length && !ss.some(s => (THEME_SEASONS[t] || []).includes(s))) t = SEASON_THEME[ss[0]] || t;
     }
   } catch(e){}
   document.documentElement.dataset.theme = t;
+  const fx = document.getElementById("season-fx");
+  const want = curFx() ? t : "off";
+  if (fx && fx.dataset.t !== want){ fx.dataset.t = want; fx.innerHTML = want === "off" ? "" : seasonFX(t); }
 }
 function render(){
   const root = $("#app");
@@ -7490,8 +7489,7 @@ function render(){
           <div class="ttoggle" role="group" aria-label="Color palette">
             <button class="tt ${th==="winter"?"on":""}" data-settheme="winter" title="Winter palette">${I.snow}<span>Winter</span></button>
             <button class="tt ${th==="spring"?"on":""}" data-settheme="spring" title="Spring palette">${I.bloom}<span>Spring</span></button>
-            <button class="tt ${th==="summer"?"on":""}" data-settheme="summer" title="Summer palette">${I.sun}<span>Summer</span></button>
-            <button class="tt ${th==="autumn"?"on":""}" data-settheme="autumn" title="Autumn palette">${I.leaf}<span>Autumn</span></button>
+            <button class="tt ${curFx()?"on":""}" data-togglefx title="Snow & petals on/off">${I.spark}<span>Effects</span></button>
           </div>
           ${state.mode === "demo" ? `
             <select id="member-switch" aria-label="Viewing as" style="width:auto;padding:6px 10px;font-size:13px">
@@ -7523,6 +7521,14 @@ function wireShell(root){
     if (m){ m.theme = t; saveDoc("members", m); }
     else { state.uiTheme = t; scheduleRender(); }
   }));
+  const fxbtn = $("[data-togglefx]", root);
+  if (fxbtn) fxbtn.addEventListener("click", () => {
+    const next = !curFx();
+    const m = state.members.find(x => x.id === state.currentMemberId);
+    if (m){ m.fx = next; saveDoc("members", m); }
+    else { state.uiFx = next; }
+    scheduleRender();
+  });
   const sw = $("#member-switch", root);
   if (sw) sw.addEventListener("change", () => { state.currentMemberId = sw.value; rememberMember(sw.value); scheduleRender(); });
   const so = $('[data-act="signout"]', root);
@@ -7848,7 +7854,7 @@ function viewVenues(){
   const chips = [`<button class="chip click ${venueFilter==="all"?"on":""}" data-vf="all">All · ${pool.length}</button>`]
     .concat(phases.map(p =>
       `<button class="chip click ${venueFilter===p.id?"on":""}" data-vf="${p.id}">${p.label} · ${counts[p.id]||0}</button>`))
-    .concat(!isHelper() && buried.length ? [`<button class="chip click ${venueFilter==="graveyard"?"on":""}" data-vf="graveyard">🪦 Graveyard · ${buried.length}</button>`] : [])
+    .concat(!isHelper() ? [`<button class="chip click ${venueFilter==="graveyard"?"on":""}" data-vf="graveyard">🪦 Graveyard${buried.length ? " · " + buried.length : ""}</button>`] : [])
     .join("");
 
   /* -------- the graveyard -------- */
@@ -8724,7 +8730,8 @@ ${names} \u00b7 [phone] \u00b7 [email]`;
 function openVenueModal(v){
   const isNew = !v;
   v = v || {id:uid(), name:"", region:"", country:"Italy", style:"", capacity:"", email:"", phone:"", url:"", status:"research",
-    useCeremony:false, useReception:false, sleeps:false, lastContact:null, availability:{}, contactLog:[], quotes:[], ratings:{}, notes:""};
+    useCeremony:false, useReception:false, sleeps:false, seasons:[], lastContact:null, availability:{}, contactLog:[], quotes:[], ratings:{}, notes:""};
+  const seasonSel = (v.seasons||[]).length === 1 ? v.seasons[0] : "all";
   openModal(isNew ? "Add a venue" : "Edit venue", `
     <div class="field"><label>Name</label><input id="f-name" value="${esc(v.name)}" placeholder="Villa \u2026"></div>
     <div class="fields2">
@@ -8739,6 +8746,9 @@ function openVenueModal(v){
     <label class="check"><input type="checkbox" id="f-cer" ${usesCeremony(v)?"checked":""}> Could host the ceremony</label>
     <label class="check"><input type="checkbox" id="f-rec" ${usesReception(v)?"checked":""}> Could host the reception</label>
     <label class="check"><input type="checkbox" id="f-sleeps" ${v.sleeps?"checked":""}> Sleeps everyone on-site</label>
+    <div class="field" style="margin-top:8px"><label>Season — sets the palette its page wears</label><select id="f-season" data-initial="${seasonSel}">
+      ${[["all","All seasons"],["sp","Spring"],["su","Summer"],["au","Autumn"],["wi","Winter"]].map(([sv,sl]) => `<option value="${sv}" ${seasonSel===sv?"selected":""}>${sl}</option>`).join("")}
+    </select></div>
     <div class="fields2" style="margin-top:8px">
       <div class="field"><label>Email</label><input id="f-email" type="email" value="${esc(v.email)}"></div>
       <div class="field"><label>Phone</label><input id="f-phone" value="${esc(v.phone)}"></div>
@@ -8757,6 +8767,9 @@ function openVenueModal(v){
         email:$("#f-email",m).value.trim(), phone:$("#f-phone",m).value.trim(), url:$("#f-url",m).value.trim(),
         status:$("#f-status",m).value, lastContact:$("#f-lc",m).value || null, sample:false
       });
+      const fsn = $("#f-season", m);
+      if (fsn && (fsn.value !== fsn.dataset.initial || !(v.seasons||[]).length))
+        v.seasons = fsn.value === "all" ? ["sp","su","au","wi"] : [fsn.value];
       saveDoc("venues", v);
       logActivity(isNew ? `added venue \u201c${v.name}\u201d` : `updated \u201c${v.name}\u201d`);
       close(); if (isNew) go("#/venues/" + v.id);
@@ -8812,7 +8825,7 @@ function openQuoteModal(venueId, q){
       ${venueFilesOf(venueId).filter(f => f.kind !== "image").map(f => `<option value="${f.id}" ${q.fileId===f.id?"selected":""}>${esc(f.name)}</option>`).join("")}</select></div>
     <div class="field"><label>Link \u2014 Drive PDF, email, website\u2026</label><input id="q-link" type="url" value="${esc(q.link||"")}" placeholder="https://drive.google.com/file/d/\u2026"></div>
     <div class="field"><label>Notes</label><textarea id="q-notes" rows="2" placeholder="Minimum guests, curfew, extras…">${esc(q.notes||"")}</textarea></div>
-    <div class="card" style="background:var(--inset);padding:12px 14px"><span class="dim small">All-in at ${+state.meta.expectedGuests||90} guests: </span><b class="mono" id="q-live">—</b></div>`,
+    <div class="card" style="background:var(--inset);padding:12px 14px"><span class="dim small">Auto-computed · all-in at ${+state.meta.expectedGuests||90} guests: </span><b class="mono" id="q-live">—</b></div>`,
     [{label: isNew ? "Add quote" : "Save quote", primary:true, onClick(m, close){
       const total = +$("#q-total", m).value; if (!total) return toast("Enter the venue price");
       Object.assign(q, { label:$("#q-label",m).value.trim(), validUntil:$("#q-valid",m).value || "",
@@ -8835,7 +8848,7 @@ function openQuoteModal(venueId, q){
     m => {
       const live = () => { const g = +state.meta.expectedGuests || 90;
         const t = (+$("#q-total",m).value || 0) + ($("#q-cat",m).value === "perHead" ? (+$("#q-ph",m).value || 0) * g : 0);
-        $("#q-live", m).textContent = t ? money(t, $("#q-cur",m).value) + "  ·  " + money(t/g, $("#q-cur",m).value) + " per guest" : "—"; };
+        $("#q-live", m).textContent = t ? money(t, $("#q-cur",m).value) + "  ·  " + money(t/g, $("#q-cur",m).value) + " per guest" : "waiting for the venue price…"; };
       $("#q-cat", m).addEventListener("change", () => { $("#q-ph-wrap", m).style.display = $("#q-cat",m).value === "perHead" ? "" : "none"; live(); });
       $("#q-acc", m).addEventListener("change", () => { $("#q-acc-wrap", m).style.display = $("#q-acc",m).checked ? "" : "none"; });
       ["q-total","q-ph","q-cur"].forEach(idn => $("#"+idn, m).addEventListener("input", live));

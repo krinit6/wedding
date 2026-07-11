@@ -230,6 +230,10 @@ table.cmp tr:last-child td{border-bottom:0}
 .seasontabs{display:inline-flex;border:1px solid var(--line2);border-radius:999px;padding:2px;background:var(--card);gap:2px}
 .seasontabs button{border:0;background:transparent;border-radius:999px;padding:5px 14px;font-size:13px;color:var(--sub)}
 .seasontabs button.on{background:var(--accent-soft);color:var(--accent-ink)}
+.seasontabs button{display:inline-flex;align-items:center;gap:6px}
+.seasontabs button svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.seasontabs button svg path{fill:none}
+.seasontabs button svg circle{fill:currentColor}
 
 /* ---------- comments ---------- */
 .cthread{display:flex;flex-direction:column;gap:12px}
@@ -302,6 +306,7 @@ table.cmp tr:last-child td{border-bottom:0}
 .rsvp{min-width:76px;text-align:center}
 .rsvp.yes{border-color:var(--ever);color:var(--ever);background:var(--ever-soft)}
 .rsvp.no{border-color:var(--berry);color:var(--berry);background:var(--berry-soft)}
+.rsvp.probable{border-color:var(--accent-deep);color:var(--accent-ink);background:var(--accent-soft)}
 .gchip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;border:1px solid var(--line2);border-radius:999px;padding:3px 10px;background:var(--inset);cursor:pointer}
 .gchip:hover{border-color:var(--berry);color:var(--berry)}
 .gchip.pick{cursor:pointer;background:var(--card)}
@@ -472,7 +477,7 @@ const statusLabel = id => (STATUSES.find(s => s.id === id) || {}).label || id;
 /* venue pipeline: 3 working phases + booked. Old statuses map onto them so nothing breaks. */
 const VENUE_PHASES = [
   {id:"research",  label:"Research"},
-  {id:"cleanup",   label:"Clean-up"},
+  {id:"cleanup",   label:"Set aside"},
   {id:"shortlist", label:"Shortlist"},
   {id:"booked",    label:"Booked"}
 ];
@@ -511,7 +516,8 @@ const SEED = {
     {id:"m1", role:"Bride",          name:"Bride"},
     {id:"m2", role:"Groom",          name:"Groom"},
     {id:"m3", role:"Maid of honor",  name:"Maid of honor"},
-    {id:"m4", role:"Groom of honor", name:"Groom of honor"}
+    {id:"m4", role:"Groom of honor", name:"Groom of honor"},
+    {id:"m5", role:"Family",         name:"Charis"}
   ],
   meta: {
     weddingName: window.STEFANA.appName || "Stefana",
@@ -1592,53 +1598,61 @@ const SEED = {
  {
   "id": "antico-podere-siliano",
   "name": "Antico Podere Siliano",
-  "region": "Tuscany",
+  "region": "Città della Pieve, Umbria, Italy — family-run hamlet estate (since 1898) with vineyard, olive grove, private lake & pool, a few miles from the Tuscan border",
   "country": "Italy",
   "flag": "🇮🇹",
-  "style": "",
-  "capacity": "",
+  "style": "A family-run Umbrian hamlet estate near the Tuscan border ('Borgo Siliano' / Antico Podere Siliano), hosting weddings since 1898 and set in 28 hectares with a vineyard, olive grove, private lake, swimming pool with hydromassage and a tennis court. Weddings privatize the whole estate, with a spread of event spaces — the historic stone hamlet, panoramic gardens, olive groves, vineyard, a fountain garden and a brand-new greenhouse for the late party. Catering is in-house (handmade, local) and there's an in-house wedding planner (Fatima, Umbria Weddings & Events). Rustic-elegant and multi-day; music runs to 2am.",
+  "capacity": "Events up to 150 (covered area seats 80 in bad weather at no charge; a new greenhouse from mid-2026 takes 140+). On-site lodging for up to 56 (apartments, double rooms & A/C 'eco-villa' luxury tents). Minimum 20 guests per daily menu — your 30 is fine. ALWAYS rented exclusively; minimum 2-night stay.",
   "status": "quoted",
   "email": "",
-  "phone": "",
-  "url": "",
-  "lastContact": null,
-  "notes": "Your score in the old tracker: 7/10.",
+  "phone": "+39 380 194 5195",
+  "url": "https://www.anticopoderesiliano.com",
+  "lastContact": "2026-06-25",
+  "notes": "Old tracker score: 7/10. Real quote READ — Fatima Palomares (in-house planner, Umbria Weddings & Events) emails of 25 Jun 2026 + the official 2027 'Borgo Siliano' wedding brochure with full pricing. ⚠️ VERY OVER BUDGET — see verdict.\n📍 CORRECTED LOCATION: this is in UMBRIA — Città della Pieve (Perugia province), a few miles from Tuscany — NOT plain 'Tuscany' as the old stub had it. A family-run hamlet estate ('Borgo Siliano' / Antico Podere Siliano) hosting weddings since 1898, set in 28 hectares with a vineyard, olive grove, private lake, pool (hydromassage) and tennis court. Contact: Fatima Palomares, +39 380 194 5195, anticopoderesiliano.com, IG @anticopoderesiliano / @borgosiliano (planning brand @umbriaweddings). No email address appears in the thread — reach out via phone/IG or the site.\n⭐ CAPACITY: events up to 150; a covered area seats 80 in bad weather at NO extra cost; a NEW greenhouse (from mid-2026) takes 140+. Min 20 guests per daily menu (your 30 is fine). ALWAYS rented exclusively; min 2-night stay.\n📅 2027 WINDOWS OFFERED (email): 30 Apr–2 May, 3–6 May, 17–20 May, 20–24 Sep, 29 Sep–1 Oct (currently pre-booked), 1–3 Oct. ⚠️ Your preferred 23 Apr 2027 (Fri) is NOT offered — nearest is the 30 Apr–2 May weekend. April/early-May = LOW season (before 15 May); the late-May/Sep/Oct windows = HIGH season. They'll pre-hold a date free for one week.\n🛏️ ACCOMMODATION: bundled into the rental — sleeps up to 56 on-site (apartments, double rooms & A/C 'eco-villa' luxury tents), all air-conditioned. Breakfast + a wedding-day panino lunch & drink for staying guests included; VAT included. Your 30 (even ~40) sleep on-site easily.\n💶 PRICING (VAT included) — WHOLE-ESTATE EXCLUSIVE RENTAL (accommodation + exclusivity + breakfast + wedding-day lunch), min 2 nights:\n• LOW season (10 Oct–15 May): 2N €19,000 Mon–Thu / €20,500 Fri–Sun · 3N €22,500 / €24,000 · 4N €25,000 / €26,500\n• HIGH season (15 May–9 Oct): 2N €19,900 Mon–Thu / €21,900 Fri–Sun · 3N €24,000 / €26,000 · 4N €27,500 / €29,000\n🍽️ FOOD & DRINK is SEPARATE, per head + 10% VAT: ≤60 guests €135pp (→ €148.50 incl VAT); ≤100 guests €130pp (→ €143 incl VAT). Includes a big antipasti buffet, 3-course meal, wedding cake + dessert buffet, AND dinner drinks (unlimited aperitivo prosecco/Aperol spritz/wine/water; dinner wine 1 btl per 3 guests + water; coffee, digestives, limoncello & grappa with the cake). Reception & ceremony setup included (crystal glasses, porcelain, country-chic chairs, linens, golden chargers, mic & speaker) — but CANDLES & FLOWERS are NOT included. A full cocktail OPEN BAR is extra: €35pp per 3 hrs (+€5pp espresso martini); draft-beer machine €150 + €150/keg. Optional add-on events: pizza party €44pp, vineyard dinner €55pp, brunch from €35pp, BBQ €60pp, cooking class €50pp.\n🕒 MUSIC/CURFEW: music until 2:00 AM (evening party in the new greenhouse) — generous vs most venues.\n🗺️ LOGISTICS: Chiusi Scalo train station 8 min (direct to Rome/Florence/Milan); airports Perugia ≈ 1h, Florence ≈ 1.5h, Rome ≈ 2h20.\n💍 BUDGET VERDICT (vs €8k): WAY OVER — a hard pass on budget. The unavoidable floor is a 2-night whole-estate rental: your cheapest offered window (3–6 May, low-season Mon–Thu) is €19,000 with ZERO food; add food for 30 at €135pp+VAT (€4,455) and you're at ~€23,455 all-in — nearly 3× your €8,000 budget, before candles/flowers, open bar, tourist tax or the in-house planner (from €2,700). The nearest-to-preferred weekend (30 Apr–2 May) is €20,500 → ~€24,955; Sep/Oct high season runs ~€24,355 (Mon–Thu) to ~€26,355 (weekend). No lever brings a mandatory €19k+ 2-night buyout near €8k. A beautiful Umbrian estate with in-house planning, 2am music and beds for everyone — but structurally ~3× out of range for an €8k intimate wedding.\nWATCH: (1) whole-estate exclusive rental is MANDATORY with a 2-night minimum — €19,000+ floor before any food. (2) Food/drink is a separate per-head charge (€135pp+VAT ≤60), pushing the realistic all-in to ~€23.5k+. (3) Your 23 Apr date isn't offered; 29 Sep–1 Oct is pre-booked. (4) Candles & flowers NOT included; open bar, tourist tax and the optional €2,700+ in-house planner are extra. (5) In-house planner (Fatima, 11 yrs, @umbriaweddings) from €2,700 — you noted you have your own, so likely skip. (6) All EUR, VAT included (Italy — no FX).\nSource: Borgo Siliano / Antico Podere Siliano email (Fatima Palomares, 25 Jun 2026) + 2027 wedding brochure & rates.",
   "availability": {},
   "contactLog": [],
   "quotes": [
    {
     "id": "q_antico-podere-siliano",
-    "label": "Your logged quote",
-    "total": 25000,
+    "label": "Whole-estate exclusive rental (accom ≤56 + breakfast + wedding-day lunch + VAT), min 2 nights: from €19,000 low-season Mon–Thu (your Apr/May window) / €20,500 weekend; Sep–Oct €19,900–€21,900. Food & dinner-drinks €135pp+VAT (≤60). ~€23,455 all-in for 30 — ~3× over €8k.",
+    "total": 19000,
     "currency": "EUR",
+    "conf": "written",
     "inclusions": {
-     "ceremony": false,
-     "reception": false,
-     "catering": "none",
-     "cateringPerHead": 0,
+     "ceremony": true,
+     "reception": true,
+     "catering": "perHead",
+     "cateringPerHead": 148.5,
      "openBar": false,
-     "barNote": "",
+     "barNote": "Dinner drinks are INCLUDED in the per-head reception price: unlimited aperitivo (prosecco, Aperol spritz, wine, water), dinner wine (1 bottle red/white per 3 guests) + water, plus coffee, digestives, limoncello & grappa served with the cake. A full cocktail OPEN BAR is EXTRA — unlimited cocktails €35pp per 3 hours (+€5pp espresso martini); draft-beer machine rental €150 (once) + €150 per 20L keg. Candles & flowers are NOT included in the setup.",
      "accommodation": {
-      "included": false,
+      "included": true,
       "rooms": 0,
-      "nights": 0,
-      "note": ""
+      "nights": 2,
+      "note": "Whole-estate exclusive rental BUNDLES on-site lodging for up to 56 (apartments, double rooms & A/C 'eco-villa' luxury tents) — exact room count not itemised in the brochure. MANDATORY minimum 2 nights. Includes breakfast + a wedding-day panino lunch & drink for all staying guests; VAT included. Your 30 sleep on-site comfortably, with spare capacity for ~40."
      },
-     "exclusiveUse": false,
+     "exclusiveUse": true,
      "planner": false
     },
     "validUntil": "",
-    "notes": "Quoted — well over the €13k budget."
+    "notes": "Basis: 2027 Borgo Siliano wedding brochure + Fatima Palomares' 25 Jun 2026 emails. total = €19,000 = the MINIMUM 2-night whole-estate exclusive rental in LOW season, Mon–Thu (e.g. the 3–6 May 2027 window — the cheapest of the dates offered; the nearest to your 23 Apr preference is the 30 Apr–2 May weekend at €20,500). It bundles exclusive use of the whole estate + on-site lodging for up to 56 + breakfast + a wedding-day panino lunch & drink, VAT included — but NOT the wedding meal. cateringPerHead = €148.50 = the ≤60-guest reception menu €135pp + 10% VAT (≤100 guests drops to €130pp → €143 incl VAT); it covers the antipasti buffet, 3 courses, cake + dessert buffet and all DINNER drinks (aperitivo, dinner wine 1 btl/3 pax, coffee, digestives, limoncello, grappa). So all-in for 30 ≈ €19,000 + €4,455 = ~€23,455 before candles/flowers (not included), a cocktail open bar (€35pp/3hr), tourist tax, or the optional in-house planner (from €2,700). Higher tiers rise steeply — 3N/4N and weekend/high-season rates (see venue notes). Replaces the legacy €25,000 stub figure with the itemised rate card. conf 'written' (brochure rates); final at contract. VERDICT: ~3× over the €8k budget — a hard pass on cost."
    }
   ],
   "ratings": {},
-  "vibes": [],
-  "seasons": [],
-  "sleeps": false,
+  "vibes": [
+   "countryside & vines",
+   "courtyard lights"
+  ],
+  "seasons": [
+   "sp",
+   "su",
+   "au"
+  ],
+  "sleeps": true,
   "verified": false,
-  "bedsIncluded": false,
+  "bedsIncluded": true,
   "estTotal": 0,
-  "priceNote": "",
+  "priceNote": "Whole-estate exclusive rental REQUIRED, min 2 nights (bundles beds for ≤56 + breakfast + wedding-day lunch, VAT incl.): from €19,000 low-season Mon–Thu / €20,500 weekend (your Apr/May window); Sep–Oct high season €19,900–€21,900. Food & dinner-drinks €135pp+VAT (≤60 guests) / €130+VAT (≤100). ~€23,455 all-in for 30 before flowers/open bar/planner — ~3× over €8k.",
   "estIsEstimate": false,
   "stay": "",
   "pitch": "",
@@ -6881,7 +6895,8 @@ const SEED = {
     {id:"t11", title:"Invitations out",             cat:"Guests",        assignee:"m3", done:false, due:{type:"rel", months:4}},
     {id:"t12", title:"Menu tasting",                cat:"Venue",         assignee:"m2", done:false, due:{type:"rel", months:4}},
     {id:"t13", title:"Hair & makeup trial",         cat:"Attire",        assignee:"m3", done:false, due:{type:"rel", months:3}},
-    {id:"t14", title:"Final headcount to venue",    cat:"Venue",         assignee:"m1", done:false, due:{type:"rel", months:1}}
+    {id:"t14", title:"Final headcount to venue",    cat:"Venue",         assignee:"m1", done:false, due:{type:"rel", months:1}},
+    {id:"t15", title:"Call the Greek venues that went silent — chase a quote (Opora, Tainaron Blue, Kyrimai, Kinsterna, Pyrgos Rali, Pyrgos Petroulaki)", cat:"Venue", assignee:"m5", done:false, due:{type:"rel", months:1}}
   ],
   guests: [
  {
@@ -7734,6 +7749,7 @@ const SEED = {
     {id:"c1", ownerId:"casa-gourgion", venueId:"casa-gourgion", by:"m2", ts:Date.now()-72e5, text:"Sample note — this thread is where the four of you talk a venue over. Delete me once you have real ones."}
   ],
   files: [
+    {id:"df_siliano_1", ownerId:"antico-podere-siliano", venueId:"antico-podere-siliano", kind:"drive", name:"Borgo Siliano (Antico Podere Siliano) — Wedding Brochure & Rates 2027", mime:"application/pdf", size:0, chunks:0, head:"", thumb:"", url:"https://drive.google.com/file/d/1W5HoupvXQ1TzkOkcvpbzBDCt5NJWCBNl/view?usp=drive_link", ts:Date.now(), by:"m2"},
     {id:"df_aeolis_1", ownerId:"aeolis-tinos-suites", venueId:"aeolis-tinos-suites", kind:"drive", name:"Aeolis Tinos Suites — Wedding Brochure 2026", mime:"application/pdf", size:0, chunks:0, head:"", thumb:"", url:"https://drive.google.com/file/d/1NtW95AYFeKORMJw-8SQ9rlSV4DSeTb9i/view?usp=drive_link", ts:Date.now(), by:"m2"},
     {id:"df_aeolis_2", ownerId:"aeolis-tinos-suites", venueId:"aeolis-tinos-suites", kind:"drive", name:"Aeolis Tinos Suites — Weddings & Events Factsheet", mime:"application/pdf", size:0, chunks:0, head:"", thumb:"", url:"https://drive.google.com/file/d/1ywNjK_1tuO2n2KMTg6J9QPf4cTeDyG4o/view?usp=drive_link", ts:Date.now(), by:"m2"},
     {id:"df_aeolis_3", ownerId:"aeolis-tinos-suites", venueId:"aeolis-tinos-suites", kind:"drive", name:"Aeolis Tinos Suites — Property Fact Sheet (Stay & Location)", mime:"application/pdf", size:0, chunks:0, head:"", thumb:"", url:"https://drive.google.com/file/d/12DWMGy2N5mR_lv5xgRmPxpXeYO-CEOYf/view?usp=drive_link", ts:Date.now(), by:"m2"},
@@ -7985,9 +8001,9 @@ async function firebaseAdapter(cfg){
       s => { cV = s.docs; merge("comments", [...cO, ...cV]); }, () => {}));
   }
   function syncCurrentMember(){
-    const email = (state.user?.email || "").toLowerCase();
+    const email = (state.user?.email || "").trim().toLowerCase();
     const map = state.meta.memberEmails || {};
-    const hit = Object.entries(map).find(([mid, em]) => (em||"").toLowerCase() === email);
+    const hit = Object.entries(map).find(([mid, em]) => (em||"").trim().toLowerCase() === email);
     if (hit){ if (state.currentMemberId !== hit[0]){ state.currentMemberId = hit[0]; scheduleRender(); } rememberMember(hit[0]); }
   }
 
@@ -8359,7 +8375,7 @@ function viewHome(){
     </div>` : `
     <div class="hero">${sprigs()}
       <div class="eyebrow">The date is still open</div>
-      <div class="big" style="font-size:clamp(30px,5vw,44px);margin:14px 0 6px">${state.dates.length} candidates. One yes.</div>
+      <div class="big" style="font-size:clamp(30px,5vw,44px);margin:14px 0 6px">${state.dates.length} candidate dates. One “yes”.</div>
       <div class="under">${lead ? `Currently leading: <b style="color:var(--accent-ink)">${weekdayOf(lead.iso)} ${fmtDate(lead.iso)}</b>` : "Cast your votes to see a frontrunner emerge."}</div>
       <div class="flameline" aria-hidden="true"></div>
       <div style="margin-top:20px"><button class="btn primary" data-nav-inline="dates">Go decide</button></div>
@@ -8702,7 +8718,7 @@ function viewVenues(){
   <div class="pagehead">
     <div><h1>Venues</h1><div class="sub">${isHelper()
       ? "The shortlist the couple wants your eyes on — open one to rate it and leave notes."
-      : `Research → clean-up → shortlist → booked. ${pool.length} in play${buried.length ? `, ${buried.length} resting in the graveyard` : ""}.`}</div></div>
+      : `Research → set aside → shortlist → booked. ${pool.length} in play${buried.length ? `, ${buried.length} resting in the graveyard` : ""}.`}</div></div>
     <div class="row">
       <button class="btn" data-act="compare">${I.compare} Compare quotes</button>
       ${isHelper() ? "" : `<button class="btn primary" data-act="add-venue">${I.plus} Add venue</button>`}
@@ -9154,7 +9170,7 @@ function viewVenue(id){
     </div>` : `<div class="empty"><div class="serif">No quote yet</div>When it lands in your inbox, capture it here — structure beats screenshots.</div>`)}
     ${isHelper() ? "" : `<div class="row">
       <button class="btn" data-act="add-quote">${I.plus} Add a quote</button>
-      <button class="btn" data-act="enquiry">${I.mail} Draft an enquiry</button>
+      <button class="btn" data-act="enquiry">${I.mail} ${v.status === "emailed" ? "Draft a follow-up" : "Draft an enquiry"}${(v.country === "Greece" || v.flag === "🇬🇷") ? " (ΕΛ)" : ""}</button>
     </div>`}
   </div>
 
@@ -9512,32 +9528,82 @@ const budgetCatForVendor = catId => ({
 /* ---------- enquiry email (ported from the old planner) ---------- */
 function openEnquiryModal(v){
   const g = +state.meta.expectedGuests || 40;
-  const seasonWords = (v.seasons && v.seasons.length) ? v.seasons.map(s => SEASON_LABEL[s]).join(" / ") : "spring to autumn";
-  const names = state.meta.coupleNames || "[Your names]";
-  const body = `Subject: Wedding enquiry \u2014 ${Math.max(30, g-10)}\u2013${g} guests, 2027 (2-night stay if possible)
+  const gLo = Math.max(30, g-10), gHi = g;
+  const isGreek = v.country === "Greece" || v.flag === "🇬🇷";
+  const isFollowup = v.status === "emailed";
+  const names = state.meta.coupleNames || (isGreek ? "[Τα ονόματά σας]" : "[Your names]");
+  const enSeasons = (v.seasons && v.seasons.length) ? v.seasons.map(s => SEASON_LABEL[s]).join(" / ") : "spring to autumn";
+  const grMap = {sp:"άνοιξη", su:"καλοκαίρι", au:"φθινόπωρο", wi:"χειμώνας"};
+  const grSeasons = (v.seasons && v.seasons.length) ? v.seasons.map(s => grMap[s]).join(" / ") : "άνοιξη έως φθινόπωρο";
+  const enEnq = `Subject: Wedding enquiry — ${gLo}–${gHi} guests, 2027 (2-night stay if possible)
 
 Dear ${v.name} team,
 
-My partner and I are planning an intimate destination wedding for ${Math.max(30, g-10)}\u2013${g} guests in 2027, and we would love to hold it with you \u2014 specifically, we\u2019re drawn to ${v.pitch || "your venue and what it offers"}.
+My partner and I are planning an intimate destination wedding for ${gLo}–${gHi} guests in 2027, and we would love to hold it with you — specifically, we're drawn to ${v.pitch || "your venue and what it offers"}.
 
 Could you please share:
-\u2022 Availability across 2027 \u2014 we are flexible within ${seasonWords}, and weekdays are welcome
-\u2022 Venue fee and what it includes, with any off-season or weekday rates
-\u2022 Catering options with per-person menu prices, and drinks/open-bar pricing
-\u2022 Accommodation: we would ideally stay TWO NIGHTS on site with our closest guests \u2014 please include room options and rates for our group
-\u2022 Music rules and end time, and whether outside vendors are permitted
-\u2022 An indicative all-in estimate for ~${Math.max(30, g-5)} guests
+• Availability across 2027 — we are flexible within ${enSeasons}, and weekdays are welcome
+• Venue fee and what it includes, with any off-season or weekday rates
+• Catering options with per-person menu prices, and drinks/open-bar pricing
+• Accommodation: we would ideally stay TWO NIGHTS on site with our closest guests — please include room options and rates for our group
+• Music rules and end time, and whether outside vendors are permitted
+• An indicative all-in estimate for ~${Math.max(30, gHi-5)} guests
 
 We are working with a clearly defined budget, so transparent pricing will help us confirm quickly. We are based in Greece and happy to arrange a visit.
 
 Warm regards,
-${names} \u00b7 [phone] \u00b7 [email]`;
-  openModal(`Enquiry \u2014 ${esc(v.name)}`, `
-    <div class="note" style="margin-bottom:10px">The same template your old planner generated \u2014 tuned to this venue\u2019s seasons and pitch. Copy it, tweak the brackets, send.</div>
+${names} · [phone] · [email]`;
+  const enFol = `Subject: Following up — 2027 wedding enquiry (${gLo}–${gHi} guests)
+
+Dear ${v.name} team,
+
+I'm following up on my earlier message about an intimate ${gLo}–${gHi}-guest wedding at your venue in 2027. I know this is a busy season — I just wanted to check it reached you, and whether you might be able to share availability and an indicative quote.
+
+We remain really keen on your venue and are flexible on dates (April / September / October 2027, weekdays welcome). Even a short reply with the essentials — venue fee, per-person catering, and accommodation for our group — would help us enormously.
+
+Thank you so much for your time.
+
+Warm regards,
+${names} · [phone] · [email]`;
+  const grEnq = `Θέμα: Αίτημα για γάμο — ${gLo}–${gHi} καλεσμένοι, 2027 (κατά προτίμηση διαμονή 2 βραδιών)
+
+Αγαπητή ομάδα του «${v.name}»,
+
+Ο σύντροφός μου κι εγώ οργανώνουμε έναν ατμοσφαιρικό, ολιγομελή γάμο για ${gLo}–${gHi} καλεσμένους το 2027 και θα χαρόμασταν πολύ να τον πραγματοποιήσουμε στον χώρο σας.
+
+Θα μπορούσατε να μας στείλετε:
+• Διαθεσιμότητα εντός του 2027 — είμαστε ευέλικτοι (${grSeasons}) και οι καθημερινές μάς βολεύουν
+• Το κόστος ενοικίασης του χώρου και τι περιλαμβάνει, καθώς και τυχόν τιμές εκτός σεζόν ή καθημερινών
+• Επιλογές catering με τιμή μενού ανά άτομο, και κόστος ποτών / open bar
+• Διαμονή: ιδανικά θα θέλαμε να διανυκτερεύσουμε ΔΥΟ ΒΡΑΔΙΑ στον χώρο με τους πιο κοντινούς μας — παρακαλώ συμπεριλάβετε επιλογές και τιμές δωματίων για την ομάδα μας
+• Κανόνες μουσικής και ώρα λήξης, καθώς και αν επιτρέπονται εξωτερικοί συνεργάτες
+• Μια ενδεικτική συνολική εκτίμηση κόστους για ~${Math.max(30, gHi-5)} καλεσμένους
+
+Έχουμε έναν σαφή προϋπολογισμό, οπότε μια διαφανής τιμολόγηση θα μας βοηθήσει να αποφασίσουμε γρήγορα. Είμαστε στην Ελλάδα και μπορούμε εύκολα να κανονίσουμε μια επίσκεψη.
+
+Με εκτίμηση,
+${names} · [τηλέφωνο] · [email]`;
+  const grFol = `Θέμα: Υπενθύμιση — αίτημα για γάμο το 2027 (${gLo}–${gHi} καλεσμένοι)
+
+Αγαπητή ομάδα του «${v.name}»,
+
+Επανέρχομαι σχετικά με το προηγούμενο μήνυμά μου για έναν ολιγομελή γάμο ${gLo}–${gHi} ατόμων στον χώρο σας το 2027. Καταλαβαίνω ότι η περίοδος είναι φορτωμένη — ήθελα απλώς να επιβεβαιώσω ότι το λάβατε και αν θα ήταν δυνατόν να μας στείλετε διαθεσιμότητα και μια ενδεικτική προσφορά.
+
+Παραμένουμε πολύ θετικοί για τον χώρο σας και είμαστε ευέλικτοι με τις ημερομηνίες (Απρίλιος / Σεπτέμβριος / Οκτώβριος 2027, καθημερινές συμπεριλαμβανομένων). Ακόμη κι ένα σύντομο email με τα βασικά — κόστος χώρου, catering ανά άτομο και διαμονή για την ομάδα μας — θα μας βοηθούσε πάρα πολύ.
+
+Σας ευχαριστώ εκ των προτέρων για τον χρόνο σας.
+
+Με εκτίμηση,
+${names} · [τηλέφωνο] · [email]`;
+  const body = isGreek ? (isFollowup ? grFol : grEnq) : (isFollowup ? enFol : enEnq);
+  const title = (isFollowup ? "Follow-up" : "Enquiry") + " — " + esc(v.name) + (isGreek ? " · ΕΛ" : "");
+  const hint = (isGreek ? "Ελληνικό πρότυπο. " : "") + (isFollowup ? "A gentle follow-up because we haven't heard back — " : "Your enquiry template — ") + "tuned to this venue. Copy it, tweak the brackets, send.";
+  openModal(title, `
+    <div class="note" style="margin-bottom:10px">${hint}</div>
     <textarea id="enq-text" rows="14" style="font-size:13px">${esc(body)}</textarea>`,
     [{label:"Copy to clipboard", primary:true, onClick(m, close){
       const ta = $("#enq-text", m);
-      const done = () => { toast("Copied \u2014 paste it into your email"); close(); };
+      const done = () => { toast("Copied — paste it into your email"); close(); };
       if (navigator.clipboard && navigator.clipboard.writeText)
         navigator.clipboard.writeText(ta.value).then(done, () => { ta.select(); document.execCommand("copy"); done(); });
       else { ta.select(); document.execCommand("copy"); done(); }
@@ -9940,7 +10006,7 @@ const partyOf = g => Math.max(1, +g.count || (g.plusOne ? 2 : 1));
 const headcountYes = () => state.guests.filter(x => x.rsvp === "yes").reduce((n, x) => n + partyOf(x), 0);
 function viewGuests(){
   const gs = state.guests;
-  const yes = gs.filter(x => x.rsvp === "yes"), no = gs.filter(x => x.rsvp === "no"), pend = gs.filter(x => x.rsvp === "pending");
+  const yes = gs.filter(x => x.rsvp === "yes"), no = gs.filter(x => x.rsvp === "no"), pend = gs.filter(x => x.rsvp === "pending"), prob = gs.filter(x => x.rsvp === "probable");
   const meals = {};
   yes.forEach(x => { if (x.meal) meals[x.meal] = (meals[x.meal]||0) + partyOf(x); });
   const list = gs.filter(x =>
@@ -9957,6 +10023,7 @@ function viewGuests(){
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:14px">
     <div class="card"><div class="dim small">Invited</div><div class="serif" style="font-size:28px">${gs.reduce((n,x) => n + partyOf(x), 0)}</div><div class="note">people · ${plural(gs.length,"party","parties")}</div></div>
     <div class="card"><div class="dim small">Coming</div><div class="serif" style="font-size:28px" data-t="yescount">${headcountYes()}</div><div class="note">people · ${plural(yes.length,"party","parties")}</div></div>
+    ${prob.length ? `<div class="card"><div class="dim small">Likely</div><div class="serif" style="font-size:28px">${prob.reduce((n,x) => n + partyOf(x), 0)}</div><div class="note">people · ${plural(prob.length,"party","parties")}</div></div>` : ""}
     <div class="card"><div class="dim small">Pending</div><div class="serif" style="font-size:28px">${pend.reduce((n,x) => n + partyOf(x), 0)}</div><div class="note">people · ${plural(pend.length,"party","parties")}</div></div>
     <div class="card"><div class="dim small">Declined</div><div class="serif" style="font-size:28px">${no.reduce((n,x) => n + partyOf(x), 0)}</div><div class="note">people · ${plural(no.length,"party","parties")}</div></div>
     ${(() => { const p = k => gs.filter(g => g.abroad === k).reduce((n,g) => n + partyOf(g), 0);
@@ -9969,13 +10036,13 @@ function viewGuests(){
     <button class="btn sm ghost right" data-act="edit-meals">Meal options</button></div>`
   : `<div class="row" style="margin-bottom:12px"><button class="btn sm ghost right" data-act="edit-meals">Meal options</button></div>`}
   <div class="row" style="margin-bottom:14px">
-    ${[["all","All"],["yes","Yes"],["pending","Pending"],["no","No"]].map(([id,l]) =>
+    ${[["all","All"],["yes","Yes"],["probable","Likely"],["pending","Pending"],["no","No"]].map(([id,l]) =>
       `<button class="chip click ${gFilter===id?"on":""}" data-gf="${id}">${l}</button>`).join("")}
     <input id="g-search" placeholder="Search name or group…" value="${esc(gSearch)}" style="width:min(240px,100%);margin-left:auto">
   </div>
   ${list.length ? `<div class="stack">${list.map(x => `
     <div class="grow-">
-      <button class="stamp rsvp ${x.rsvp}" data-rsvp="${x.id}" title="Tap to cycle">${x.rsvp === "yes" ? "Yes" : x.rsvp === "no" ? "No" : "Pending"}</button>
+      <button class="stamp rsvp ${x.rsvp}" data-rsvp="${x.id}" title="Tap to cycle">${x.rsvp === "yes" ? "Yes" : x.rsvp === "probable" ? "Likely" : x.rsvp === "no" ? "No" : "Pending"}</button>
       <div style="flex:1;min-width:0">
         <div>${esc(x.name)}${partyOf(x) > 1 ? ` <span class="stamp candle">\u00d7${partyOf(x)}${x.plusOneName ? " " + esc(x.plusOneName) : ""}</span>` : ""}</div>
         <div class="note">${sideName(x.side)}${x.group ? " · " + esc(x.group) : ""}${x.invitedTo === "party" ? " · party only" : x.invitedTo === "ceremony" ? " · ceremony only" : ""}${x.rsvp === "yes" && x.meal ? " · " + esc(x.meal) : ""}${x.dietary ? " · " + esc(x.dietary) : ""}${x.needsStay ? (x.coveredByUs ? " · stay: on us" : " · stay: own booking") : ""}${x.transfer ? " · needs transfer" : ""}${x.abroad === "no" ? " · can\u2019t travel abroad" : x.abroad === "maybe" ? " · abroad: maybe" : ""}${x.notes ? " · " + esc(x.notes) : ""}</div>
@@ -9990,7 +10057,7 @@ function wireGuests(root){
   if (s) s.addEventListener("input", () => { gSearch = s.value; scheduleRender(); });
   $$("[data-rsvp]", root).forEach(b => b.addEventListener("click", () => {
     const x = state.guests.find(g => g.id === b.dataset.rsvp); if (!x) return;
-    x.rsvp = x.rsvp === "pending" ? "yes" : x.rsvp === "yes" ? "no" : "pending";
+    x.rsvp = x.rsvp === "pending" ? "yes" : x.rsvp === "yes" ? "probable" : x.rsvp === "probable" ? "no" : "pending";
     saveDoc("guests", x);
     if (x.rsvp !== "pending") logActivity(`marked ${x.name} as “${x.rsvp}”`);
   }));
@@ -10033,7 +10100,7 @@ function openGuestModal(orig){
     </div>
     <div class="fields3">
       <div class="field"><label>RSVP</label><select id="g-rsvp">
-        ${["pending","yes","no"].map(r => `<option value="${r}" ${x.rsvp===r?"selected":""}>${r[0].toUpperCase()+r.slice(1)}</option>`).join("")}</select></div>
+        ${["pending","yes","probable","no"].map(r => `<option value="${r}" ${x.rsvp===r?"selected":""}>${({pending:"Pending",yes:"Yes",probable:"Likely",no:"No"})[r]}</option>`).join("")}</select></div>
       <div class="field"><label>Meal</label><select id="g-meal"><option value="">—</option>
         ${(state.meta.mealOptions||[]).map(m => `<option ${x.meal===m?"selected":""}>${esc(m)}</option>`).join("")}</select></div>
       <div class="field"><label>Dietary notes</label><input id="g-diet" value="${esc(x.dietary)}" placeholder="Allergies, vegan…"></div>
@@ -10556,7 +10623,7 @@ function viewSettings(){
   </div>
   <div class="sect">The four of you</div>
   <div class="card">
-    <div class="note" style="margin-bottom:12px">Names appear on votes and tasks. Emails link each login to a person — use the exact address of each Firebase account.</div>
+    <div class="note" style="margin-bottom:12px">Names appear on votes and tasks. Emails link each login to a person — use the exact address of each Firebase account.${(state.mode === "firebase" && state.user) ? `<br><br>You\u2019re signed in as <b>${esc(state.user.email)}</b>, currently viewing as <b>${esc(me().role)}</b>. To see what a maid/groom of honor sees, put this email in that person\u2019s <b>Login email</b> below and Save (then reload). A recognised couple email keeps full access; anyone else sees the honor-attendant view.` : ""}</div>
     <div class="stack">
     ${state.members.map(m => `
       <div class="fields2" style="align-items:end">
@@ -10588,11 +10655,7 @@ function viewSettings(){
         <button class="btn" data-act="import-venues" ${mv ? "" : "disabled"}>Add the missing venues</button>
       </div>`; })()}
     </div>
-    <div class="card">
-      <h3>Undo an accidental re-add</h3>
-      <p class="note" style="margin:10px 0 12px">If an import ever brings back venues you\u2019d deleted in the past, this replays your activity history and re-buries every venue whose last recorded event was a deletion. They go to the graveyard \u2014 nothing is erased \u2014 so you can review them and restore any keeper.</p>
-      <button class="btn" data-act="rebury">Re-bury my deleted venues</button>
-    </div>`}
+`}
     <div class="card">
       <h3>Connection</h3>
       ${state.mode === "firebase"

@@ -276,6 +276,11 @@ table.cmp tr:last-child td{border-bottom:0}
 .sprig.tl{top:14px;left:16px}
 .sprig.br{right:16px;bottom:14px;transform:rotate(180deg)}
 @media (max-width:560px){.sprig{width:54px;height:54px}}
+.viewdeco{position:relative;height:0;pointer-events:none;z-index:0}
+.viewdeco .sprig{opacity:.45;width:64px;height:64px}
+.viewdeco .sprig.tl{top:-4px;left:-6px}
+.viewdeco .sprig.br{top:-4px;right:-6px;left:auto;bottom:auto;transform:scaleX(-1)}
+@media (max-width:760px){.viewdeco{display:none}}
 
 /* ---------- lists ---------- */
 .vrow{display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 1px 2px rgba(var(--shadow),.12)}
@@ -873,7 +878,9 @@ const SEED = {
   "url": "https://aeolistinossuites.com",
   "lastContact": "2026-06-28",
   "notes": "Old tracker score: 8/10. REAL written quote now in hand: email from Christina Kleinopoulou (Sales Manager, Aeolis Tinos Suites), 28 Jun 2026, in reply to your date enquiry — plus the 2026 wedding brochure, the Event & Wedding Menus 2026 price list, and the property factsheets.\n💶 ALL LISTED PRICES ARE EX-VAT — the brochure explicitly states VAT (ΦΠΑ) is NOT included, so I've grossed everything up by Greek VAT 24% for the budget maths below.\n🏛️ VENUE PRIVATIZATION (restaurant + pool area, exclusive use): May/Jun/Sep €1,500 · Jul/Aug €2,500 (ex VAT). 18/09/2027 sits in the €1,500 band → €1,860 incl VAT. That fee already includes tables/chairs/white linen, F&B service equipment, parking, a welcome drink, reception/service/bar staff, a menu tasting, pre- and post-event cleaning, planning support + day-of coordination, and extended hours. Adding the Upper Pool Balcony level (for a separate sunset ceremony above the pool) is possible but wasn't priced.\n🍽️ FOOD (fully in-house — no external caterers): seated menus Menu 1 €45 → Menu 8 €60pp; buffets €60/€70pp; welcome bites €7/€10/€12pp; finger food €30/€45pp. DRINKS packages: Essential €20 (wine/beer/soft), Celebration €35 (+ spirits & 2–3 cocktails), Premium €40 (+ sparkling & champagne). All pp, ex VAT.\n💰 ALL-IN vs €8k (incl 24% VAT; venue + food + drinks; NO separate planner): floor (Essential €20 + Menu 1 €45) ≈ €4,290 for 30 / €5,100 for 40; mid (Celebration €35 + Menu 1 €45) ≈ €4,830 / €5,820; premium (Premium €40 + a €60 menu + €12 welcome) ≈ €6,030 / €7,420. Comfortably UNDER €8k across every tier for 30–40.\n🧑‍💼 OPTIONAL in-house FULL planning is 'from €2,500' (≈ +€3,100 incl VAT) — you likely DON'T need it for 30–40 because day-of coordination is already inside the venue fee; but add it and the premium/larger builds tip OVER €8k. (They also 'recommend' a planner only for events over 150 guests.)\n⭐ FIT: a genuinely strong, in-budget option — and it sleeps the whole party on site.\n📅 DATES: only 18/09/2027 (a SATURDAY) was confirmed available. Your other two asks — 23/04/2027 and 03/09/2027 — weren't addressed in the reply, so re-confirm those if you'd prefer them. Mid-Sept is shoulder season (good weather, and the cheaper €1,500 band).\n🛏️ SLEEPS: 50 private suites & villas on site (well over enough beds for 40), BUT room rates aren't in the quote and rooms are a separate cost. Full-property buyout is available too (pricing varies by season + length of stay; min nights & min charge apply) — and guest room-spend is offset against the buyout deposit. Ask for suite rates / a buyout figure to price a true 'everyone sleeps on site' number.\n📝 TERMS: deposits 30% on booking (locks the date) / 50% at −30 days / 20% at −10 days; cancellation within 15 days of the event = 100% charge; children under 12 = 50%; a minimum guest count is agreed per contract; extra heads are charged per person. VENDORS (decor, flowers, cake, DJ, photo, video) are via their partners — those sit in your €5k extras reserve, not the €8k venue budget.\nWATCH: (1) +24% VAT on everything — not shown on the price list. (2) Only 1 of your 3 dates confirmed. (3) It's a ~450-capacity big-events venue — confirm which single space a 30–40 group uses and whether any minimum spend applies at that size. (4) Rooms & full-buyout unpriced. (5) End-time / music volume are 'by agreement' — pin down a curfew. (6) All EUR (Greece — no FX).\nSource: Aeolis email (Christina Kleinopoulou, 28 Jun 2026) + Wedding Brochure 2026 + Event & Wedding Menus 2026 + property factsheets.",
-  "availability": {},
+  "availability": {
+   "2027-09-18": "free"
+  },
   "contactLog": [],
   "quotes": [
    {
@@ -1166,7 +1173,14 @@ const SEED = {
   "url": "https://ambelonas-corfu.gr",
   "lastContact": "2026-06-28",
   "notes": "Old tracker score: 6/10. Real quote basis now READ — Meryem Istel (Reservations) email of 28 Jun 2026 + Ambelonas's official Wedding Information Pack (2026, ENG). NOTE: the email itself gives no bespoke price — it confirms availability in April, September or October 2027, says a tailored quote follows once you confirm menu / guest count / arrival & departure times, and that the FINAL price is confirmed in January 2027 (subject to the local economic situation). The figures below come from their written pack.\n📍 Ambelonas Corfu — a 400-year-old hillside vineyard estate in central Corfu; rustic Corfiot restaurant & gardens, jasmine/rose pergola with fairy lights, wine barrels and antique décor. Contact: ambelonas.corfu@gmail.com (reservations: Ambelonas.Meryem@gmail.com), +30 693 215 8888, ambelonas-corfu.gr, IG/FB @Ambelonas_Corfu.\n⭐ CAPACITY: 30–180 (indoor ≤80, outdoor ≤180) — NO minimum guest count, which directly answers Katerina's worry (you're firmly ~50 and can't meet 80–100 minimums; here 30–50 is completely fine). Exclusive use included in the rental fee.\n💶 PRICING (written pack):\n• Venue rental (exclusive use): €1,500 Oct–April / €2,500 May–Sep for ≤50 guests; €3,000 for 51–100; €3,500 for 100+. Includes rustic tables & chairs, linen, cutlery, all lighting/fairy lights, indoor & outdoor ceremony spaces, and parking (incl. overnight).\n• Food & drink during dinner: usually €90–150 per person (welcome drinks & canapés, a 3–5-course tailored dinner or buffet, toasting drinks, dinner wine/beer/soft drinks, after-dinner bites). Default serving is buffet (no upcharge); family-style (<80 guests) adds ~€6pp; individually plated (<50 guests only) adds ~€10pp.\n• Open bar (beyond dinner drinks): extra, on request — by drink, by bottle, or by the hour.\n• Minimum WEDDING SPEND: €5,000 Oct–April / €7,000 May–Sep (a spend floor, not a guest floor — easily met here).\n🕒 MUSIC/CURFEW: outdoor music until 11pm weekdays / 12 midnight weekends; indoor party until 2am. Your preferred 23 April 2027 is a FRIDAY → the weekday 11pm outdoor-music curfew likely applies, indoor until 2am.\n💍 BUDGET VERDICT (vs €8k): STRONG value at your size. For your preferred APRIL date (cheaper Oct–April band): venue €1,500 + food. At ~40 guests you're ~€5,100–€7,500 all-in (€90–150pp) — comfortably under €8k. At 50 guests it's ~€6,000 (at €90pp) up to ~€9,000 (at €150pp): UNDER €8k up to roughly €130pp, tipping OVER only at the top of the menu range, a heavy open-bar package, plated-service upgrades, or September's pricing. The venue fee is trivial; cost is menu-driven and you control it.\nWATCH: (1) NOT a locked quote — a tailored quote follows once you confirm menu/guests/times, and FINAL price is set Jan 2027 (economy-dependent). (2) MONTH MATTERS: April & October = €1,500 venue + €5,000 min; May–Sep = €2,500 venue + €7,000 min. (3) Extras stack: overtime prep €60/hr & event €150/hr beyond the default 12h (6h prep + 6h event); big-table rearrangement €150; glitter/confetti/plate-smashing cleaning €100; forest-ceremony location surcharge; plated/family-style upcharges. (4) NO on-site lodging (vineyard restaurant, not a hotel) — budget separately for Corfu accommodation. (5) No sparklers/fireworks/open flames; contained candles only. (6) Deposit €1,000 to book; 50% at 30 days; balance at 10 days. Cancellation: 100% refund 12+ mo out, sliding to 0% under 5 mo. (7) All EUR (Greece — no FX).\nSource: Ambelonas Corfu email (Meryem Istel, 28 Jun 2026) + Wedding Information Pack 2026 (ENG).",
-  "availability": {},
+  "availability": {
+   "2027-04-23": "free",
+   "2027-09-09": "free",
+   "2027-09-18": "free",
+   "2027-09-27": "free",
+   "2027-10-17": "free",
+   "2027-10-27": "free"
+  },
   "contactLog": [],
   "quotes": [
    {
@@ -1284,7 +1298,14 @@ const SEED = {
   "url": "https://www.villalav.hr",
   "lastContact": "2026-06-25",
   "notes": "Old tracker score: 6/10. Real quote READ — Villa Lav Team email of 25 Jun 2026 + their 2027 wedding menu & 'Basic Information' pack (full pricing). One of your rare options that actually FITS €8k at your size — see verdict.\n📍 Villa Lav — Restaurant & Rooms, Grote 25, 52211 Bale (Valle), Istria, Croatia — a restored stone villa in a medieval Istrian hill-town, ~6 km inland from the Adriatic; Istrian/truffle/Adriatic cuisine. Contact: office.villalav@gmail.com / info@villalav.hr, +385 52 824267 / +385 97 7050015, villalav.hr, IG @villa_lav.\n📅 2027 DATES (September is FULLY BOOKED): they offered April 19–22 or April 25–30, and October 4–7 or October 11–14. NB: your target 23 April isn't in their offered windows — nearest are Apr 19–22 or 25–30. April = pre-season, October = post-season → both OFF-SEASON pricing.\n🛏️ ACCOMMODATION (3 on-site villas, 30 beds total): Villa Lav 8 double rooms / 16 beds (€155/night, private baths), Villa Kata 5 rooms / 10 beds (€420/night), Villa Petrush 2 rooms / 4 beds (€380/night). MANDATORY: exclusive booking of all 8 Villa Lav rooms for min 2 nights; the other two villas are OPTIONAL overflow so your whole party of 30 can sleep on-site. Breakfast included; ~10% lower in low/pre-season; 5% off for 3+ nights.\n💶 PRICING (all EUR — Croatia is on the euro, no FX):\n• Whole-estate privatization fee: €800 off-season (pre/post) / €1,800 high season.\n• Menus (per person): Meat-on-the-grill €110 · Peka €115 · Fish €115 · Vegetarian €98.\n• Beverage packages (per person): Standard €55 · Superior €70 · Deluxe €85.\n• Offer includes all inventory (tables, chairs, glasses, plates).\n🕒 MUSIC/CURFEW: outdoor music & parties strictly until 00:00 (midnight), then off.\n📋 DATE RULE: intimate weddings (<35 adults) can book a weekend or any day OFF-season; in HIGH season (Jun–Sep) they're restricted to Mon–Thu — but your April/Oct dates are off-season, so any day works.\n💍 BUDGET VERDICT (vs €8k): FITS — but right on the line. For 30 guests in April/Oct with the CHEAPEST combo (meat menu €110 + Standard drinks €55) + €800 privatization + the mandatory 8 Villa Lav rooms for 2 nights (~€2,232 with the low-season discount), the all-in is ~€7,980 — just under €8k. It tips OVER if you: upgrade the menu (Peka/Fish €115) or drinks (Superior €70 / Deluxe €85), book all three villas to sleep everyone on-site (~+€1,600/night → ~€9.5k), or go high season (€1,800 privatization). At full room rate (no low-season discount) it's ~€8,230 — just over. So: genuinely viable at your size IF you stay disciplined on menu/drinks and don't need all 30 in on-site beds; trimming a few guests makes it comfortable.\nWATCH: (1) right at the €8k line — hinges on the low-season room discount + cheapest menu/drinks. (2) Mandatory: all 8 Villa Lav rooms + 2-night minimum + whole-estate privatization. (3) Your 23 April target isn't offered (Apr 19–22 / 25–30 or Oct 4–7 / 11–14). (4) Housing all 30 on-site needs all 3 villas (~+€1,600/night). (5) Midnight outdoor-music curfew. (6) No in-house planner mentioned (you noted you have your own). (7) All EUR (Croatia — no FX).\nSource: Villa Lav email (25 Jun 2026) + 2027 wedding menu & Basic Information pack.",
-  "availability": {},
+  "availability": {
+   "2027-04-23": "booked",
+   "2027-09-09": "booked",
+   "2027-09-18": "booked",
+   "2027-09-27": "booked",
+   "2027-10-17": "booked",
+   "2027-10-27": "booked"
+  },
   "contactLog": [],
   "quotes": [
    {
@@ -1347,7 +1368,11 @@ const SEED = {
   "url": "https://www.borgosantambrogio.com",
   "lastContact": "2026-06-28",
   "notes": "Old tracker score: 8/10. Real quote READ — Ludovica Apollonj Ghetti (Wedding Planning Team) email of 28 Jun 2026 + the official 2027 'last-minute' wedding brochure with full pricing. ⚠️ VERY OVER BUDGET — see verdict.\n📍 CORRECTED LOCATION: this is in TUSCANY (Val d'Orcia / Val di Chiana, Siena province), NOT Umbria as the old stub had it — a 400+-year organic wine & olive estate and refined resort with cinematic rolling-hill views. Contact: wedding@borgosantambrogio.com (Ludovica: ludovica.apollonj@borgosantambrogio.com; info@borgosantambrogio.com), +39 0577 665250 / +39 391 7501524, borgosantambrogio.com, IG/FB @borgosantambrogio. Planning team: Francesca, Manola, Monica.\n🛏️ ACCOMMODATION: 11 exclusive rooms (apartments & Junior Suites), sleeping 22–32 onsite (incl. 10 in sofa beds). Your 30 just fits; 40 needs nearby overflow lodging.\n⭐ CAPACITY (event spaces): ceremony garden / courtyard / olive garden up to 150; restaurant 100 seated; meeting room 60; chapel 20. NO minimum guest count — but there IS an unavoidable minimum SPEND (below), which is the real issue.\n💶 PRICING (VAT included) — FULL-PROPERTY EXCLUSIVE RENTAL IS REQUIRED (all 11 rooms + all indoor/outdoor areas), minimum 2 nights:\n• 1 night: €11,900 low (Nov–Apr) / €13,600 high (May–Oct)\n• 2 nights: €15,300 low / €17,000 high\n• 3 nights: €18,400 low / €20,400 high\n• 4 nights: €21,400 low / €23,800 high\nIncludes: breakfast, one complimentary pre-wedding night for two, the wedding-PLANNING fee, parking attendant, wedding-day bathroom cleaning and furniture rearrangement.\n🍽️ CATERING is EXTRA and via their MANDATORY partner Roland's Social & Business Catering — per-head menu price NOT in the brochure (Ludovica will send it on request), so food is unquoted and on top of the rental. Outside food/drink not allowed; a different external caterer adds €1,830 (wedding day) / €610 (welcome dinner or brunch); food trucks free.\n🕒 MUSIC/CURFEW: outdoor music until 1:00 AM; NO restriction on indoor music. Extra hours after 2:00 AM €305/hr; extra hours also charged if non-overnight guests linger after the event.\n💍 BUDGET VERDICT (vs €8k): WAY OVER — this one doesn't fit. Your preferred 23 April 2027 is low season, so the unavoidable floor is the 2-night full-property rental at €15,300 — nearly DOUBLE your entire €8,000 budget, and that's the venue + all 11 rooms with ZERO food. Your Sept/Oct alternatives (3/9, 18/9, 17/10) are high season = €17,000. Add Roland's catering (unpriced, realistically ~€3,000–€6,000 for 30–40 at typical Tuscan per-heads), tourist tax, SIAE, flowers and extras and a realistic all-in is ~€18,000–€22,000+ — roughly 2.5–3× budget. Even the 'last-minute special offer' rate is ~2× over. A stunning Val d'Orcia estate, but structurally out of range for an €8k intimate wedding.\nWATCH: (1) whole-property exclusive rental is MANDATORY (you can't hire just the event space) and the 2-night minimum locks in €15,300+. (2) Food is a separate, unquoted Roland's menu — the €15,300 buys NO catering. (3) Deposit non-refundable; cancellation 50% (to 6 mo out) → 70% (4 mo) → 100% (2 mo). (4) 30 fits onsite (≤32), 40 doesn't. (5) SIAE copyright fee + tourist tax on you; extras after 2am €305/hr. (6) Check-in 3pm / check-out 10:30am, no check-out-day brunch. (7) All EUR, VAT included (Italy — no FX).\nSource: Borgo Sant'Ambrogio email (Ludovica Apollonj Ghetti, 28 Jun 2026) + 2027 last-minute wedding brochure.",
-  "availability": {},
+  "availability": {
+   "2027-04-23": "free",
+   "2027-09-18": "free",
+   "2027-10-17": "free"
+  },
   "contactLog": [],
   "quotes": [
    {
@@ -1609,7 +1634,14 @@ const SEED = {
   "url": "https://www.anticopoderesiliano.com",
   "lastContact": "2026-06-25",
   "notes": "Old tracker score: 7/10. Real quote READ — Fatima Palomares (in-house planner, Umbria Weddings & Events) emails of 25 Jun 2026 + the official 2027 'Borgo Siliano' wedding brochure with full pricing. ⚠️ VERY OVER BUDGET — see verdict.\n📍 CORRECTED LOCATION: this is in UMBRIA — Città della Pieve (Perugia province), a few miles from Tuscany — NOT plain 'Tuscany' as the old stub had it. A family-run hamlet estate ('Borgo Siliano' / Antico Podere Siliano) hosting weddings since 1898, set in 28 hectares with a vineyard, olive grove, private lake, pool (hydromassage) and tennis court. Contact: Fatima Palomares, +39 380 194 5195, anticopoderesiliano.com, IG @anticopoderesiliano / @borgosiliano (planning brand @umbriaweddings). No email address appears in the thread — reach out via phone/IG or the site.\n⭐ CAPACITY: events up to 150; a covered area seats 80 in bad weather at NO extra cost; a NEW greenhouse (from mid-2026) takes 140+. Min 20 guests per daily menu (your 30 is fine). ALWAYS rented exclusively; min 2-night stay.\n📅 2027 WINDOWS OFFERED (email): 30 Apr–2 May, 3–6 May, 17–20 May, 20–24 Sep, 29 Sep–1 Oct (currently pre-booked), 1–3 Oct. ⚠️ Your preferred 23 Apr 2027 (Fri) is NOT offered — nearest is the 30 Apr–2 May weekend. April/early-May = LOW season (before 15 May); the late-May/Sep/Oct windows = HIGH season. They'll pre-hold a date free for one week.\n🛏️ ACCOMMODATION: bundled into the rental — sleeps up to 56 on-site (apartments, double rooms & A/C 'eco-villa' luxury tents), all air-conditioned. Breakfast + a wedding-day panino lunch & drink for staying guests included; VAT included. Your 30 (even ~40) sleep on-site easily.\n💶 PRICING (VAT included) — WHOLE-ESTATE EXCLUSIVE RENTAL (accommodation + exclusivity + breakfast + wedding-day lunch), min 2 nights:\n• LOW season (10 Oct–15 May): 2N €19,000 Mon–Thu / €20,500 Fri–Sun · 3N €22,500 / €24,000 · 4N €25,000 / €26,500\n• HIGH season (15 May–9 Oct): 2N €19,900 Mon–Thu / €21,900 Fri–Sun · 3N €24,000 / €26,000 · 4N €27,500 / €29,000\n🍽️ FOOD & DRINK is SEPARATE, per head + 10% VAT: ≤60 guests €135pp (→ €148.50 incl VAT); ≤100 guests €130pp (→ €143 incl VAT). Includes a big antipasti buffet, 3-course meal, wedding cake + dessert buffet, AND dinner drinks (unlimited aperitivo prosecco/Aperol spritz/wine/water; dinner wine 1 btl per 3 guests + water; coffee, digestives, limoncello & grappa with the cake). Reception & ceremony setup included (crystal glasses, porcelain, country-chic chairs, linens, golden chargers, mic & speaker) — but CANDLES & FLOWERS are NOT included. A full cocktail OPEN BAR is extra: €35pp per 3 hrs (+€5pp espresso martini); draft-beer machine €150 + €150/keg. Optional add-on events: pizza party €44pp, vineyard dinner €55pp, brunch from €35pp, BBQ €60pp, cooking class €50pp.\n🕒 MUSIC/CURFEW: music until 2:00 AM (evening party in the new greenhouse) — generous vs most venues.\n🗺️ LOGISTICS: Chiusi Scalo train station 8 min (direct to Rome/Florence/Milan); airports Perugia ≈ 1h, Florence ≈ 1.5h, Rome ≈ 2h20.\n💍 BUDGET VERDICT (vs €8k): WAY OVER — a hard pass on budget. The unavoidable floor is a 2-night whole-estate rental: your cheapest offered window (3–6 May, low-season Mon–Thu) is €19,000 with ZERO food; add food for 30 at €135pp+VAT (€4,455) and you're at ~€23,455 all-in — nearly 3× your €8,000 budget, before candles/flowers, open bar, tourist tax or the in-house planner (from €2,700). The nearest-to-preferred weekend (30 Apr–2 May) is €20,500 → ~€24,955; Sep/Oct high season runs ~€24,355 (Mon–Thu) to ~€26,355 (weekend). No lever brings a mandatory €19k+ 2-night buyout near €8k. A beautiful Umbrian estate with in-house planning, 2am music and beds for everyone — but structurally ~3× out of range for an €8k intimate wedding.\nWATCH: (1) whole-estate exclusive rental is MANDATORY with a 2-night minimum — €19,000+ floor before any food. (2) Food/drink is a separate per-head charge (€135pp+VAT ≤60), pushing the realistic all-in to ~€23.5k+. (3) Your 23 Apr date isn't offered; 29 Sep–1 Oct is pre-booked. (4) Candles & flowers NOT included; open bar, tourist tax and the optional €2,700+ in-house planner are extra. (5) In-house planner (Fatima, 11 yrs, @umbriaweddings) from €2,700 — you noted you have your own, so likely skip. (6) All EUR, VAT included (Italy — no FX).\nSource: Borgo Siliano / Antico Podere Siliano email (Fatima Palomares, 25 Jun 2026) + 2027 wedding brochure & rates.",
-  "availability": {},
+  "availability": {
+   "2027-04-23": "booked",
+   "2027-09-09": "booked",
+   "2027-09-18": "booked",
+   "2027-09-27": "booked",
+   "2027-10-17": "booked",
+   "2027-10-27": "booked"
+  },
   "contactLog": [],
   "quotes": [
    {
@@ -6761,7 +6793,19 @@ const SEED = {
   "url": "",
   "lastContact": "2026-07-09",
   "notes": "Enquiry sent via Wedinspire (40 guests, intimate). They replied 9 Jul 2026 with the 2027 brochure — NO itemised total, just sample rates.\n• Symbolic ceremonies only; a legal Orthodox/civil wedding must be at a church or Town Hall via a local planner.\n• Open 17:00–01:00. Outdoor music: dance till 23:00, lounge 23:00–00:00, none outdoors after; can move indoors 23:00–01:00 with open-bar min consumption. Indoor live music to 02:00.\n• F&B is venue-exclusive — no outside caterers allowed.\n• No beds on site ('village without citizens'); accommodation is offsite at 3 sister Grecotel hotels ~5km, via a group code, only after signing.\n• No on-site planner — they recommend locals.\nBUDGET WATCH: buffets need a 60-guest minimum, so at 40 the only affordable food path is a seated menu (€88pp). Even the leanest full build — 2nd Square (no rental fee) + €3,500 ceremony package + €88pp seated dinner + €33.50pp regular wine — is ~€8,360, i.e. ~€360 over your €8k ceiling before any canapés, open bar, late-night, décor or beds. 1st Square adds €5,500. Sunday dates carry +15%. Deposit 30% of total or €5,000, non-refundable.\nDATES: they offered 23/04, 27/06, 03/09, 09/09, 18/09, 17/10 2027 — that covers your Apr 23, Jun 27, Sep 9, Sep 18 and Oct 17. They offered NOTHING for 21/06, 27/09, 27/10 or any of your Nov/Dec dates — it's an outdoor village, not a winter venue.\nSource: Grecotel Danilia Village email + 2027 Wedding Offers brochure & Banquet Kit (attached).",
-  "availability": {},
+  "availability": {
+   "2027-04-23": "free",
+   "2027-06-27": "free",
+   "2027-09-09": "free",
+   "2027-09-18": "free",
+   "2027-10-17": "free",
+   "2027-06-21": "booked",
+   "2027-09-27": "booked",
+   "2027-10-27": "booked",
+   "2027-11-23": "booked",
+   "2027-12-23": "booked",
+   "2027-12-27": "booked"
+  },
   "contactLog": [],
   "quotes": [
    {
@@ -8273,6 +8317,7 @@ function render(){
       <div class="garland-strip" aria-hidden="true">${garlandSVG()}</div>
       ${state.mode === "demo" ? `<div style="padding:12px 0 0"><div class="demo-banner">Demo mode — changes are not saved. Connect Firebase (see the setup guide) to make this real.</div></div>` : ""}
       ${state.mode === "firebase" && state.fbEmpty ? `<div style="padding:12px 0 0"><div class="demo-banner">Your database is empty. <button class="btn sm primary" data-act="seed">Load the starter plan</button></div></div>` : ""}
+      <div class="viewdeco" aria-hidden="true">${sprigs()}</div>
       <main class="content" id="view">${view}</main>
     </div>
   </div>
@@ -8468,17 +8513,21 @@ function dateFlags(d){
   const lore = (DATE_LORE[d.iso] || []).filter(l => !own.includes(l));
   return own.concat(lore);
 }
+let dateFilter = "all";
+let dateScope = "all";
 function viewDates(){
   const ld = lockedDate(), lead = leadingDate();
   const meId = me().id;
-  const cards = [...state.dates].sort((a,b) => a.iso.localeCompare(b.iso)).map(d => {
+  const shownDates = dateFilter === "pinned" ? state.dates.filter(d => d.pinned) : state.dates;
+  const availPool = dateScope === "short" ? visibleVenues().filter(v => phaseOf(v) === "shortlist") : dateScope === "play" ? visibleVenues().filter(v => phaseOf(v) !== "cleanup") : visibleVenues();
+  const cards = [...shownDates].sort((a,b) => a.iso.localeCompare(b.iso)).map(d => {
     const s = dateScore(d);
     const wd = weekdayOf(d.iso);
     const isLead = !ld && lead && lead.id === d.id;
     const isLocked = ld && ld.id === d.id;
     const day = toDate(d.iso);
     const weekdayHint = [1,2,3,4].includes(day.getDay()) ? "Weekday — venues often discount" : null;
-    const freeVs = visibleVenues().filter(v => (v.availability||{})[d.iso] === "free");
+    const freeVs = availPool.filter(v => (v.availability||{})[d.iso] === "free");
     const freeCount = freeVs.length;
     const myVote = (d.votes||{})[meId];
     return `
@@ -8489,6 +8538,7 @@ function viewDates(){
           <div class="moy">${day.toLocaleDateString("en-GB",{month:"long"})} ${day.getFullYear()}</div></div>
         <div class="stack" style="gap:6px;align-items:flex-end;padding-right:22px">
           <span class="stamp">${wd}</span>${seasonStamp(d.iso)}
+          <button class="stamp click ${d.pinned?"solid":""}" data-pin-date="${d.id}" title="Add to your date shortlist">${d.pinned?"★ Shortlisted":"☆ Shortlist"}</button>
           ${freeCount ? `<span class="stamp olive">${plural(freeCount,"venue")} free</span>` : ""}
           ${isLocked ? `<span class="stamp solid">Locked in</span>` : isLead ? `<span class="stamp candle">Leading</span>` : ""}
         </div>
@@ -8518,7 +8568,19 @@ function viewDates(){
         : "All four of you vote — Love counts double, one veto knocks a date out of the lead. The glowing card is your current frontrunner."}</div></div>
     <button class="btn" data-act="add-date">${I.plus} Add a date</button>
   </div>
-  <div class="grid cols-auto" style="margin-top:16px">${cards}</div>`;
+  <div class="row" style="margin-top:14px">
+    <button class="chip click ${dateFilter==="all"?"on":""}" data-df="all">All dates · ${state.dates.length}</button>
+    <button class="chip click ${dateFilter==="pinned"?"on":""}" data-df="pinned">★ Shortlist · ${state.dates.filter(d=>d.pinned).length}</button>
+  </div>
+  <div class="row" style="margin-top:8px;align-items:center;gap:8px">
+    <span class="dim small">Venues free counted against:</span>
+    <div class="seasontabs">
+      <button class="${dateScope==="all"?"on":""}" data-dscope="all">All · ${visibleVenues().length}</button>
+      <button class="${dateScope==="play"?"on":""}" data-dscope="play">In play · ${visibleVenues().filter(v=>phaseOf(v)!=="cleanup").length}</button>
+      <button class="${dateScope==="short"?"on":""}" data-dscope="short">Shortlist · ${visibleVenues().filter(v=>phaseOf(v)==="shortlist").length}</button>
+    </div>
+  </div>
+  <div class="grid cols-auto" style="margin-top:14px">${cards || `<div class="empty"><div class="serif">No shortlisted dates yet</div>Tap ☆ Shortlist on the dates you love to gather your top picks here.</div>`}</div>`;
 }
 function wireDates(root){
   $$("[data-vote]", root).forEach(b => b.addEventListener("click", () => {
@@ -8556,6 +8618,13 @@ function wireDates(root){
         logActivity(`added candidate date ${fmtDate(iso)}`); close();
       }}]);
   });
+  $$("[data-df]", root).forEach(b => b.addEventListener("click", () => { dateFilter = b.dataset.df; scheduleRender(); }));
+  $$("[data-dscope]", root).forEach(b => b.addEventListener("click", () => { dateScope = b.dataset.dscope; scheduleRender(); }));
+  $$("[data-pin-date]", root).forEach(b => b.addEventListener("click", () => {
+    const d = state.dates.find(x => x.id === b.dataset.pinDate); if (!d) return;
+    d.pinned = !d.pinned; saveDoc("dates", d);
+    logActivity(d.pinned ? `shortlisted the date ${fmtDate(d.iso)}` : `removed ${fmtDate(d.iso)} from the date shortlist`);
+  }));
 }
 
 /* ============================ view: venues ============================ */
@@ -8581,7 +8650,7 @@ function perGuestAllIn(q){
   return quoteTrueTotal(q, g) / g;
 }
 
-const vFilt = {use:"", stay:"", season:"", country:"", vibe:"", price:"", pmin:"", pmax:""};
+const vFilt = {use:"", stay:"", season:"", country:"", vibe:"", price:"", status:"", pmin:"", pmax:""};
 let vSearch = "";
 const fold = s => (s || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const venueHaystack = v => fold([v.name, v.region, v.country, v.style, v.pitch, v.notes, v.priceNote, v.stay,
@@ -8597,6 +8666,7 @@ const useBadge = v => { const c = usesCeremony(v), r = usesReception(v);
 const hasStay = v => !!v.sleeps || !!(v.stay||"").trim() || anyQuote(v, i => (i.accommodation||{}).included);
 function venueMatches(v){
   if (vSearch.trim() && !venueHaystack(v).includes(fold(vSearch.trim()))) return false;
+  if (vFilt.status && v.status !== vFilt.status) return false;
   if (vFilt.use === "ceremony" && !usesCeremony(v)) return false;
   if (vFilt.use === "reception" && !usesReception(v)) return false;
   if (vFilt.use === "both" && !(usesCeremony(v) && usesReception(v))) return false;
@@ -8660,6 +8730,7 @@ function viewVenues(){
   const filterBar = `
   <div class="fbar" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
     <input data-vsearch type="search" placeholder="Search \u2014 name, region, notes, quotes\u2026" value="${esc(vSearch)}" style="flex:1 1 230px;min-width:180px;padding:7px 10px;font-size:13.5px">
+    ${sel("status", opt("","Outreach: any", vFilt.status) + opt("toContact","To email", vFilt.status) + opt("emailed","Emailed — no reply yet", vFilt.status) + opt("quoted","Quote received", vFilt.status) + opt("passed","Passed", vFilt.status))}
     ${sel("use", opt("","Use: any", vFilt.use) + opt("ceremony","Ceremony", vFilt.use) + opt("reception","Reception", vFilt.use) + opt("both","Ceremony + reception", vFilt.use))}
     ${sel("stay", opt("","Stay: any", vFilt.stay) + opt("stay","Has stay on-site", vFilt.stay) + opt("sleeps","Sleeps everyone", vFilt.stay))}
     ${sel("season", opt("","Season: any", vFilt.season) + Object.entries(SEASON_LABEL).map(([k,l]) => opt(k, l, vFilt.season)).join(""))}
@@ -9293,13 +9364,14 @@ function wireCompare(root){ $('[data-act="back"]', root).addEventListener("click
 
 /* ============================ view: vendors ============================ */
 let vendorFilter = "all";
+let vendorStatus = "all";
 const vendorCost = v => (+v.cost || 0);
 const vendorOutstanding = v => Math.max(0, (+v.cost || 0) - (v.depositPaid ? (+v.deposit || 0) : 0));
 function viewVendors(){
   const cats = VENDOR_CATS.filter(c => state.vendors.some(v => v.cat === c.id));
   const chips = [`<button class="chip click ${vendorFilter==="all"?"on":""}" data-vf="all">All · ${state.vendors.length}</button>`]
     .concat(cats.map(c => `<button class="chip click ${vendorFilter===c.id?"on":""}" data-vf="${c.id}">${c.label} · ${state.vendors.filter(v=>v.cat===c.id).length}</button>`)).join("");
-  const list = vendorFilter === "all" ? [...state.vendors] : state.vendors.filter(v => v.cat === vendorFilter);
+  const list = (vendorFilter === "all" ? [...state.vendors] : state.vendors.filter(v => v.cat === vendorFilter)).filter(v => vendorStatus === "all" || v.status === vendorStatus);
   const catOrder = Object.fromEntries(VENDOR_CATS.map((c,i) => [c.id, i]));
   const statusOrder = Object.fromEntries(STATUSES.map((s,i) => [s.id, i]));
   list.sort((a,b) => (catOrder[a.cat]??9)-(catOrder[b.cat]??9) || (statusOrder[a.status]??9)-(statusOrder[b.status]??9) || a.name.localeCompare(b.name));
@@ -9336,11 +9408,13 @@ function viewVendors(){
     <div class="card"><div class="dim small">Booked</div><div class="serif" style="font-size:28px">${booked}</div></div>
     <div class="card"><div class="dim small">Committed spend</div><div class="serif" style="font-size:28px">${money(totalCost)}</div><div class="note">across all vendors</div></div>
   </div>
-  <div class="row" style="margin:12px 0 16px">${chips}</div>
+  <div class="row" style="margin:12px 0 8px">${chips}</div>
+  <div class="row" style="margin:0 0 16px">${["all","toContact","emailed","shortlist","booked"].map(s => `<button class="chip click ${vendorStatus===s?"on":""}" data-vstatus="${s}">${({all:"All stages",toContact:"To email",emailed:"Emailed",shortlist:"★ Shortlisted",booked:"Booked"})[s]} · ${s==="all"?state.vendors.length:state.vendors.filter(v=>v.status===s).length}</button>`).join("")}</div>
   ${list.length ? `<div class="stack">${rows}</div>` : `<div class="empty"><div class="serif">No vendors yet</div>Add the first supplier you've emailed — the same pipeline that works for venues works here.</div>`}`;
 }
 function wireVendors(root){
   $$("[data-vf]", root).forEach(c => c.addEventListener("click", () => { vendorFilter = c.dataset.vf; scheduleRender(); }));
+  $$("[data-vstatus]", root).forEach(c => c.addEventListener("click", () => { vendorStatus = c.dataset.vstatus; scheduleRender(); }));
   $$("[data-open-vendor]", root).forEach(r => r.addEventListener("click", () => go("#/vendors/" + r.dataset.openVendor)));
   const add = $('[data-act="add-vendor"]', root); if (add) add.addEventListener("click", () => openVendorModal());
 }
